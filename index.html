@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Tabuada Boy - Evolution</title>
 
-<link class="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAOFJREFUWEftlkEOgyAQRQc3brx5D7yDN3Djxhu48cYbWJfGHfeGxobSqYAi1cWmZv7wm5lJnA8AJnAFJtBWuM6rSADh+9WB+exAhFOK9Lt1tmaSXjKAHIwKtOiu1ukjhHwAeRwI8bQQn/MAPdRZAegBllnHf7CfMcUUU0wxxRRTTLGfxR4yi70TfcusXpxBslwjjUj7lo5UikUjU3rqW7nrKyGVIqN7TItRjRrVMgywLLHl/wbgExj69WH2sjeGGFNAuDowVKdax6jQGd9aMgU6HrkgZQ7hfbp8byiYBLO0pUCuWKlSEPtcynNPg1H9xK4AAAAASUVORK5CYII=">
+<link class="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAOFJREFUWEftlkEOgyAQRQc3brx5D7yDN3Djxhu48cYbWJfGHfeGxobSqYAi1cWmZv7wm5lJnA8AJnAFJtBWuM6rSADh+9WB+exAhFOK9Lt1tmaSXjKAHIwKtOiu1ukjhHwAeRwI8bQQn/MAPdRZAegBllnHf7CfMcUUU0wxxRRTTLGfxR4yi70TfcusXpxBslwjjUj7lo5UikUjU3rqW7nrKyGVIqN7TIdRjRrVMgywLLHl/wbgExj69WH2sjeGGFNAuDowVKdax6jQGd9aMgU6HrkgZQ7hfbp8byiYBLO0pUCuWKlSEPtcynNPg1H9xK4AAAAASUVORK5CYII=">
 
 <style>
   :root{
@@ -17,9 +17,9 @@
     --lcd-ink:#0f380f;
     --btn-grey:#787569;
     --btn-grey-dark:#5c594f;
-    --green:#4a7a4a;
-    --green-dark:#2e5c2e;
-    --red:#8B1D40;
+    --green:#8B1D40; /* Alterado de verde para vinho/magenta escuro */
+    --green-dark:#6a1630;
+    --red:#8B1D40; /* Mantido em vinho/magenta escuro */
     --red-dark:#6a1630;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-font-smoothing:none;}
@@ -514,8 +514,9 @@
     fuseBurning: true, // Pavil queimando ou parado
     bombExploded: false,
 
-    // Banco de questões Quiz CRT SP - carregado do arquivo externo
+    // Banco de questões Quiz CRT SP
     quizQuestions: [],
+    shuffledQuestions: [], // Fila embaralhada para evitar repetição
     currentQuizQuestion: null,
     questionsLoaded: false
   };
@@ -642,12 +643,14 @@
 
         st.quizQuestions = parsed;
         st.questionsLoaded = parsed.length > 0;
+        st.shuffledQuestions = []; // Reseta a fila embaralhada antiga
         console.log('Perguntas carregadas:', parsed.length);
         return parsed;
       })
       .catch(function(err) {
         st.quizQuestions = [];
         st.questionsLoaded = false;
+        st.shuffledQuestions = [];
         console.error('Erro ao carregar perguntas.txt:', err);
         return [];
       });
@@ -713,6 +716,7 @@
     st.streak = 0; st.timeLeft = 60; st.currentLevel = 1;
     st.scene = "play"; st.paused = false; st.exitPending = false;
     st.fuseBurning = true; st.bombExploded = false;
+    st.shuffledQuestions = []; // Reseta a fila de perguntas para novo jogo
 
     $("pauseOverlay").classList.add("hidden");
     $("exitOverlay").classList.add("hidden");
@@ -886,7 +890,14 @@
   }
 
   function nextQuizQuestionInternal() {
-    var q = st.quizQuestions[Math.floor(Math.random() * st.quizQuestions.length)];
+    // Se a fila embaralhada estiver vazia, recria e reembaralha todas as questões do banco
+    if (st.shuffledQuestions.length === 0) {
+      st.shuffledQuestions = st.quizQuestions.slice();
+      st.shuffledQuestions.sort(function() { return 0.5 - Math.random(); });
+    }
+
+    // Pega e remove a primeira pergunta da fila
+    var q = st.shuffledQuestions.shift();
     st.currentQuizQuestion = q;
     st.options = q.o;
     st.correctIdx = q.c;
@@ -983,6 +994,9 @@
     if (modeKey() !== "quiz") {
       $("streakDisplay").textContent = st.streak;
       $("levelDisplay").textContent = st.currentLevel;
+    } else {
+      // No modo quiz, atualiza apenas o streak counter
+      $("playFooter").innerHTML = "Sequência: <span>" + st.streak + "</span> | Matéria: <span>" + st.currentQuizQuestion.m + "</span>";
     }
 
     setTimeout(function(){
