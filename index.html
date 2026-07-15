@@ -605,7 +605,6 @@
       })
       .then(function(text) {
         var parsed = [];
-        // Divide as perguntas usando o delimitador ---
         var parts = text.split('---');
         parts.forEach(function(part) {
           var lines = part.trim().split('\n');
@@ -614,7 +613,7 @@
 
           lines.forEach(function(line) {
             line = line.trim();
-            if (line.startsWith('#') || line === '') return; // Ignora comentários ou vazios
+            if (line.startsWith('#') || line === '') return;
 
             if (line.startsWith('Q:')) {
               qObj.q = line.substring(2).trim();
@@ -627,7 +626,6 @@
             }
             else if (line.startsWith('C:')) {
               var char = line.substring(2).trim().toUpperCase();
-              // Determina o índice correto: A (primeiro item -> 0) ou B (segundo item -> 1)
               qObj.c = (char === 'B' || char === 'ERRADO') ? 1 : 0;
               hasData = true;
             }
@@ -695,10 +693,8 @@
   function modeKey(){ return MODES[st.modeIdx].key; }
 
   function startGame(){
-    // Verifica se o modo Quiz tem perguntas carregadas
     if (modeKey() === "quiz") {
       if (!st.questionsLoaded || st.quizQuestions.length === 0) {
-        // Tenta carregar novamente
         loadQuizQuestions().then(function(questions) {
           if (questions && questions.length > 0) {
             startGameInternal();
@@ -762,7 +758,6 @@
     $("statRight").textContent = right;
   }
 
-  // Carinhas em estilo Game Boy (monocromático)
   function getHappyFace() {
     return "☺";
   }
@@ -785,14 +780,12 @@
     }, 600);
   }
 
-  // Desenho customizado da Bomba e animação de Pavil Queimando no Canvas 2D
   function drawBomb() {
     var canvas = $("bombCanvas");
     if (!canvas) return;
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Ajusta tamanho lógico
     canvas.width = 160;
     canvas.height = 40;
 
@@ -800,7 +793,6 @@
     var light = "#9bbc0f";
 
     if (st.bombExploded) {
-      // Animação de Explosão pixelada simples
       ctx.fillStyle = dark;
       ctx.beginPath();
       ctx.arc(80, 20, 18, 0, Math.PI*2);
@@ -811,20 +803,16 @@
       return;
     }
 
-    // Desenha corpo da bomba
     ctx.fillStyle = dark;
     ctx.beginPath();
     ctx.arc(30, 24, 12, 0, Math.PI*2);
     ctx.fill();
 
-    // Detalhe superior da bomba (bocal)
     ctx.fillRect(27, 9, 6, 4);
 
-    // Texto da Bomba (Nível / Status)
     ctx.font = "700 10px monospace";
     ctx.fillText("LVL " + st.currentLevel, 12, 27);
 
-    // Desenha Pavil (curva)
     ctx.strokeStyle = dark;
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -832,17 +820,14 @@
     ctx.quadraticCurveTo(50, -5, 120, 15);
     ctx.stroke();
 
-    // Comprimento do Pavil proporcional ao tempo restante (60s base)
     var timeRatio = Math.max(0, Math.min(1, st.timeLeft / 60));
     var fuseLength = 90 * timeRatio;
     var sparkX = 30 + (fuseLength);
     var sparkY = 9 + (0.1 * fuseLength);
 
-    // Fagulha / Faísca acesa se estiver queimando
     if (st.fuseBurning && st.timeLeft > 0) {
       ctx.fillStyle = dark;
       ctx.fillRect(sparkX - 2, sparkY - 2, 4, 4);
-      // Faíscas radiais
       var r = Math.random() > 0.5 ? 4 : 2;
       ctx.fillRect(sparkX - r, sparkY - r, 1, 1);
       ctx.fillRect(sparkX + r, sparkY + r, 1, 1);
@@ -855,7 +840,6 @@
       return;
     }
 
-    // Multiplicação tradicional
     var max = RANGES[st.rangeIdx];
     var a = 1 + Math.floor(Math.random()*max);
     var b = 1 + Math.floor(Math.random()*max);
@@ -883,7 +867,6 @@
 
   function nextQuizQuestion() {
     if (st.quizQuestions.length === 0) {
-      // Tenta recarregar as perguntas
       loadQuizQuestions().then(function(questions) {
         if (questions && questions.length > 0) {
           nextQuizQuestionInternal();
@@ -954,19 +937,17 @@
       showFeedback("ACERTOU!", true);
 
       if (modeKey() === "bomba") {
-        st.fuseBurning = false; // Para de queimar temporariamente
+        st.fuseBurning = false;
         var rules = BOMB_LEVELS[st.currentLevel - 1];
-        st.timeLeft += rules[1]; // Soma tempo do nível correspondente
-        if (st.timeLeft > 60) st.timeLeft = 60; // Limite de 60s
+        st.timeLeft += rules[1];
+        if (st.timeLeft > 60) st.timeLeft = 60;
         drawBomb();
 
-        // Sobe de nível a cada 5 acertos
         if (st.streak % 5 === 0 && st.currentLevel < 10) {
           st.currentLevel++;
           playLevelUp();
           showFeedback("NÍVEL " + st.currentLevel + "!", true);
         } else if (st.streak >= 50 && st.currentLevel === 10) {
-          // Desarma a bomba no nível 10 com 50 acertos seguidos!
           clearInterval(st.timerHandle);
           setTimeout(function() {
             victory();
@@ -980,9 +961,9 @@
       showFeedback("ERROU!", false);
 
       if (modeKey() === "bomba") {
-        st.fuseBurning = true; // Reinicia queima
+        st.fuseBurning = true;
         var rules = BOMB_LEVELS[st.currentLevel - 1];
-        st.timeLeft -= rules[0]; // Desconta tempo proporcional ao nível
+        st.timeLeft -= rules[0];
         if (st.timeLeft <= 0) {
           st.timeLeft = 0;
           st.bombExploded = true;
@@ -1056,7 +1037,6 @@
     playSound(440, 0.05, 'square', 0.05);
   }
 
-  // Toque/Ação física
   function btnA(){
     if(st.scene === "menu"){
       startGame();
@@ -1064,7 +1044,6 @@
       if(st.exitPending){
         st.exitPending = false;
         $("exitOverlay").classList.add("hidden");
-        // Volta para o menu
         clearInterval(st.timerHandle);
         st.scene = "menu";
         showView("view-menu");
@@ -1094,7 +1073,6 @@
         $("pauseOverlay").classList.add("hidden");
         nextQuestion();
       } else {
-        // Pular pergunta normal
         nextQuestion();
       }
     }
@@ -1106,7 +1084,6 @@
       renderMenu();
       playMenuSound();
     } else if(st.scene === "play"){
-      // Abre o diálogo de confirmação para sair
       st.exitPending = true;
       $("exitOverlay").classList.remove("hidden");
       playMenuSound();
@@ -1130,7 +1107,6 @@
     }
   }
 
-  // Event Listeners Físicos e Toque
   $("btnUp").addEventListener("click", function(){ dpadAction("up"); });
   $("btnDown").addEventListener("click", function(){ dpadAction("down"); });
   $("btnLeft").addEventListener("click", function(){ dpadAction("left"); });
@@ -1141,7 +1117,6 @@
   $("btnSelect").addEventListener("click", btnSelect);
   $("btnStart").addEventListener("click", btnStart);
 
-  // Teclado
   document.addEventListener("keydown", function(e){
     if (e.key === "ArrowUp") dpadAction("up");
     else if (e.key === "ArrowDown") dpadAction("down");
@@ -1153,9 +1128,7 @@
     else if (e.key === "Enter") btnStart();
   });
 
-  // Inicialização
   loadRecords();
-  // Carrega perguntas do arquivo externo
   loadQuizQuestions().then(function() {
     renderMenu();
   }).catch(function() {
