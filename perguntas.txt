@@ -1,0 +1,108 @@
+# BANCO DE QUESTÕES - CRT-SP (CONCURSO QUADRIX)
+# Organizado para leitura simples pela aplicação 'Tabuada Boy'
+# Formato de cada questão:
+# Q: Texto da pergunta
+# O: Opção A | Opção B
+# C: Letra da opção correta (A ou B)
+# M: Matéria correspondente
+# ---
+
+Q: O plenário deliberativo do Conselho Federal (CFT) será composto de conselheiros federais eleitos juntamente com seus suplentes, respeitados os critérios de representação regional definidos em regimento interno.
+O: Certo | Errado
+C: A
+M: Lei nº 13.639/2018
+
+Q: Constitui infração disciplinar passível de sanção abster-se de votar nas eleições do respectivo conselho federal.
+O: Certo | Errado
+C: A
+M: Lei nº 13.639/2018
+
+Q: O valor da taxa do Termo de Responsabilidade Técnica (TRT) não poderá ser superior a R$ 100,00 de acordo com o texto original da Lei nº 13.639/2018.
+O: Certo | Errado
+C: B
+M: Lei nº 13.639/2018
+
+Q: De acordo com a Lei nº 13.639/2018, a sanção de suspensão do exercício profissional pode ser aplicada por um período de até 2 (dois) anos.
+O: Certo | Errado
+C: B
+M: Lei nº 13.639/2018
+
+Q: A pretensão de punição das sanções disciplinares aplicadas pelos conselhos prescreverá no prazo de 5 (cinco) anos, contado da data do fato.
+O: Certo | Errado
+C: A
+M: Lei nº 13.639/2018
+
+Q: A pedido do representado ou do representante, o processo disciplinar poderá tramitar em sigilo, sendo que, após a decisão final, o processo será tornado público.
+O: Certo | Errado
+C: A
+M: Lei nº 13.639/2018
+
+Q: Compete aos Conselhos Regionais (CRTs) julgar, em primeira instância, os processos disciplinares, na forma que determinar o regimento interno do Conselho Federal.
+O: Certo | Errado
+C: A
+M: Lei nº 13.639/2018
+
+Q: O técnico industrial que estabelecer domicílio profissional em outro estado deve emitir um registro secundário no CRT do novo território, prevalecendo o domicílio da pessoa física.
+O: Certo | Errado
+C: A
+M: Lei nº 13.639/2018
+
+Q: É autorizada ao técnico industrial a assunção de responsabilidades que extrapolem os limites de suas atribuições em casos de extrema urgência e emergência pública.
+O: Certo | Errado
+C: B
+M: Lei nº 13.639/2018
+
+Q: De acordo com a Lei de Improbidade (Lei nº 8.429/1992), o mero exercício de função ou desempenho de competências públicas, sem comprovação de ato doloso com fim ilícito, afasta a responsabilidade por improbidade administrativa.
+O: Certo | Errado
+C: A
+M: Lei nº 8.429/1992
+
+Q: Os atos de improbidade administrativa admitem a modalidade culposa quando houver grave negligência ou imperícia na conservação do patrimônio público.
+O: Certo | Errado
+C: B
+M: Lei nº 8.429/1992
+
+Q: A ação para a aplicação das sanções de improbidade administrativa prescreve em 8 (oito) anos, contados a partir da ocorrência do fato ou, no caso de infrações permanentes, do dia em que tiver cessado a permanência.
+O: Certo | Errado
+C: A
+M: Lei nº 8.429/1992
+
+Q: Na Lei de Acesso à Informação (LAI - Lei nº 12.527/2011), o prazo máximo de restrição de acesso para informações classificadas como 'ultrassecretas' é de 25 (vinte e cinco) anos.
+O: Certo | Errado
+C: A
+M: Lei de Acesso à Informação
+
+Q: O prazo máximo de restrição de acesso para informações classificadas como 'secretas' pela LAI é de 15 (quinze) anos.
+O: Certo | Errado
+C: A
+M: Lei de Acesso à Informação
+
+Q: De acordo com a LAI, quando não for possível conceder o acesso imediato à informação solicitada, o órgão público terá o prazo máximo de até 30 (trinta) dias para responder, prorrogáveis por mais 10 (dez).
+O: Certo | Errado
+C: B
+M: Lei de Acesso à Informação
+
+Q: Não há que se falar em poder hierárquico quando se trata das relações administrativas entre a União Federal e suas entidades de administração indireta (como conselhos federais).
+O: Certo | Errado
+C: A
+M: Direito Administrativo
+
+Q: Ao exercer o Poder de Polícia, o Estado atua na esfera privada para restringir, limitar ou condicionar o exercício de atividades desempenhadas pelos particulares em benefício do interesse público.
+O: Certo | Errado
+C: A
+M: Direito Administrativo
+
+Q: O abuso de poder, que invalida o ato administrativo, pode ocorrer de duas formas: pelo excesso de poder (vício de competência) ou pelo desvio de poder (vício de finalidade).
+O: Certo | Errado
+C: A
+M: Direito Administrativo
+
+Q: Os atos administrativos discricionários são imunes ao controle pelo Poder Judiciário, mesmo que violem os limites da proporcionalidade, da razoabilidade ou da própria legalidade.
+O: Certo | Errado
+C: B
+M: Direito Administrativo
+
+Q: A autotutela administrativa é o poder que a Administração Pública possui de anular seus próprios atos quando eivados de ilegalidades, ou de revogá-los por motivos de conveniência e oportunidade.
+O: Certo | Errado
+C: A
+M: Direito Administrativo
