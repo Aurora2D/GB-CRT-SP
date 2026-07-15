@@ -17,9 +17,9 @@
     --lcd-ink:#0f380f;
     --btn-grey:#787569;
     --btn-grey-dark:#5c594f;
-    --green:#8B1D40; /* Alterado de verde para vinho/magenta escuro */
+    --green:#8B1D40;
     --green-dark:#6a1630;
-    --red:#8B1D40; /* Mantido em vinho/magenta escuro */
+    --red:#8B1D40;
     --red-dark:#6a1630;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-font-smoothing:none;}
@@ -249,12 +249,10 @@
     flex-direction:column; 
     align-items:center;
   }
-  /* B Button: Left and Down */
   .ab-col.b-col {
     left:0;
     bottom:0;
   }
-  /* A Button: Right and Up (Diagonal layout) */
   .ab-col.a-col {
     right:0;
     top:0;
@@ -473,7 +471,6 @@
   ];
 
   // Regras de tempo e punição por nível (nível 1 a 10)
-  // [erros_perde, acerto_ganha]
   var BOMB_LEVELS = [
     [1, 10], // Nível 1
     [2, 9],  // Nível 2
@@ -484,7 +481,7 @@
     [7, 3],  // Nível 7
     [8, 2],  // Nível 8
     [9, 1],  // Nível 9
-    [10, 0]  // Nível 10 (Sobrevivência total)
+    [10, 0]  // Nível 10
   ];
 
   var st = {
@@ -510,15 +507,16 @@
     paused: false,
     exitPending: false,
 
-    currentLevel: 1, // de 1 a 10 no modo bomba
-    fuseBurning: true, // Pavil queimando ou parado
+    currentLevel: 1,
+    fuseBurning: true,
     bombExploded: false,
 
     // Banco de questões Quiz CRT SP
     quizQuestions: [],
-    shuffledQuestions: [], // Fila embaralhada para evitar repetição
+    shuffledQuestions: [],
     currentQuizQuestion: null,
-    questionsLoaded: false
+    questionsLoaded: false,
+    isFirstQuizQuestion: true // Flag para controlar se é a primeira pergunta do quiz
   };
 
   var audioCtx = null;
@@ -597,6 +595,18 @@
     } catch(e) {}
   }
 
+  // Função para embaralhar array (Fisher-Yates)
+  function shuffleArray(array) {
+    var arr = array.slice();
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
+    }
+    return arr;
+  }
+
   // Carrega arquivo de perguntas externo (perguntas.txt)
   function loadQuizQuestions() {
     return fetch('perguntas.txt')
@@ -643,7 +653,7 @@
 
         st.quizQuestions = parsed;
         st.questionsLoaded = parsed.length > 0;
-        st.shuffledQuestions = []; // Reseta a fila embaralhada antiga
+        st.shuffledQuestions = []; // Reseta a fila
         console.log('Perguntas carregadas:', parsed.length);
         return parsed;
       })
@@ -654,6 +664,85 @@
         console.error('Erro ao carregar perguntas.txt:', err);
         return [];
       });
+  }
+
+  // Função para preparar a fila de perguntas do quiz
+  function prepareQuizQueue() {
+    if (st.quizQuestions.length === 0) {
+      return false;
+    }
+    st.shuffledQuestions = shuffleArray(st.quizQuestions);
+    st.isFirstQuizQuestion = true;
+    return true;
+  }
+
+  // Função para pegar a próxima pergunta do quiz
+  function getNextQuizQuestion() {
+    // Se não há perguntas carregadas, tenta recarregar
+    if (st.quizQuestions.length === 0) {
+      loadQuizQuestions().then(function() {
+        if (st.quizQuestions.length > 0) {
+          prepareQuizQueue();
+          displayQuizQuestion();
+        } else {
+          $("questionText").textContent = "Nenhuma pergunta disponível";
+          st.options = ["Voltar", "Sair"];
+          st.correctIdx = 0;
+          st.cursor = 0;
+          st.locked = false;
+          $("optionsGrid").className = "options-grid quiz-mode";
+          renderOptions();
+        }
+      });
+      return null;
+    }
+
+    // Se a fila está vazia, recria e embaralha
+    if (st.shuffledQuestions.length === 0) {
+      if (!prepareQuizQueue()) {
+        return null;
+      }
+    }
+
+    // Pega a próxima pergunta da fila
+    var q = st.shuffledQuestions.shift();
+    
+    // Se por algum motivo a pergunta for undefined, recarrega
+    if (!q) {
+      if (!prepareQuizQueue()) {
+        return null;
+      }
+      q = st.shuffledQuestions.shift();
+    }
+
+    return q;
+  }
+
+  // Função para exibir a pergunta do quiz
+  function displayQuizQuestion() {
+    var q = getNextQuizQuestion();
+    
+    if (!q) {
+      $("questionText").textContent = "Erro ao carregar pergunta";
+      st.options = ["Voltar", "Sair"];
+      st.correctIdx = 0;
+      st.cursor = 0;
+      st.locked = false;
+      $("optionsGrid").className = "options-grid quiz-mode";
+      renderOptions();
+      return;
+    }
+
+    st.currentQuizQuestion = q;
+    st.options = q.o;
+    st.correctIdx = q.c;
+    st.cursor = 0;
+    st.locked = false;
+
+    $("questionText").textContent = q.q;
+    $("playFooter").innerHTML = "Matéria: <span>" + q.m + "</span>";
+    $("optionsGrid").className = "options-grid quiz-mode";
+    renderOptions();
   }
 
   function renderMenu(){
@@ -680,7 +769,7 @@
       if (!st.questionsLoaded || st.quizQuestions.length === 0) {
         $("menuRecord").innerHTML = "Banco de perguntas não carregado";
       } else {
-        $("menuRecord").innerHTML = "Melhor sequência Quiz: <span>" + st.bestQuizStreak + "</span>";
+        $("menuRecord").innerHTML = "Melhor sequência Quiz: <span>" + st.bestQuizStreak + "</span> | Total: " + st.quizQuestions.length + " questões";
       }
     } else {
       $("rangeContainer").style.display = "block";
@@ -716,7 +805,8 @@
     st.streak = 0; st.timeLeft = 60; st.currentLevel = 1;
     st.scene = "play"; st.paused = false; st.exitPending = false;
     st.fuseBurning = true; st.bombExploded = false;
-    st.shuffledQuestions = []; // Reseta a fila de perguntas para novo jogo
+    st.shuffledQuestions = []; // Reseta a fila
+    st.isFirstQuizQuestion = true; // Reseta flag
 
     $("pauseOverlay").classList.add("hidden");
     $("exitOverlay").classList.add("hidden");
@@ -730,6 +820,22 @@
     }
 
     updateStatusBar();
+    
+    // Se for modo quiz, prepara a fila de perguntas
+    if (modeKey() === "quiz") {
+      if (st.quizQuestions.length > 0) {
+        prepareQuizQueue();
+      } else {
+        loadQuizQuestions().then(function() {
+          if (st.quizQuestions.length > 0) {
+            prepareQuizQueue();
+          }
+          nextQuestion();
+        });
+        return;
+      }
+    }
+    
     nextQuestion();
     playSound(440, 0.05, 'square', 0.05);
   }
@@ -840,7 +946,7 @@
 
   function nextQuestion(){
     if (modeKey() === "quiz") {
-      nextQuizQuestion();
+      displayQuizQuestion();
       return;
     }
 
@@ -866,47 +972,6 @@
 
     $("questionText").textContent = a + " x " + b;
     $("optionsGrid").className = "options-grid";
-    renderOptions();
-  }
-
-  function nextQuizQuestion() {
-    if (st.quizQuestions.length === 0) {
-      loadQuizQuestions().then(function(questions) {
-        if (questions && questions.length > 0) {
-          nextQuizQuestionInternal();
-        } else {
-          $("questionText").textContent = "Nenhuma pergunta disponível";
-          st.options = ["Voltar", "Sair"];
-          st.correctIdx = 0;
-          st.cursor = 0;
-          st.locked = false;
-          $("optionsGrid").className = "options-grid quiz-mode";
-          renderOptions();
-        }
-      });
-      return;
-    }
-    nextQuizQuestionInternal();
-  }
-
-  function nextQuizQuestionInternal() {
-    // Se a fila embaralhada estiver vazia, recria e reembaralha todas as questões do banco
-    if (st.shuffledQuestions.length === 0) {
-      st.shuffledQuestions = st.quizQuestions.slice();
-      st.shuffledQuestions.sort(function() { return 0.5 - Math.random(); });
-    }
-
-    // Pega e remove a primeira pergunta da fila
-    var q = st.shuffledQuestions.shift();
-    st.currentQuizQuestion = q;
-    st.options = q.o;
-    st.correctIdx = q.c;
-    st.cursor = 0;
-    st.locked = false;
-
-    $("questionText").textContent = q.q;
-    $("playFooter").innerHTML = "Matéria: <span>" + q.m + "</span>";
-    $("optionsGrid").className = "options-grid quiz-mode";
     renderOptions();
   }
 
@@ -996,7 +1061,7 @@
       $("levelDisplay").textContent = st.currentLevel;
     } else {
       // No modo quiz, atualiza apenas o streak counter
-      $("playFooter").innerHTML = "Sequência: <span>" + st.streak + "</span> | Matéria: <span>" + st.currentQuizQuestion.m + "</span>";
+      $("playFooter").innerHTML = "Sequência: <span>" + st.streak + "</span> | Matéria: <span>" + (st.currentQuizQuestion ? st.currentQuizQuestion.m : "") + "</span>";
     }
 
     setTimeout(function(){
