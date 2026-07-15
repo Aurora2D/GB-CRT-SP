@@ -513,10 +513,10 @@
 
     // Banco de questões Quiz CRT SP
     quizQuestions: [],
-    shuffledQuestions: [],
+    quizIndex: 0, // Índice atual na lista de perguntas
+    shuffledQuizQuestions: [], // Lista embaralhada
     currentQuizQuestion: null,
-    questionsLoaded: false,
-    isFirstQuizQuestion: true // Flag para controlar se é a primeira pergunta do quiz
+    questionsLoaded: false
   };
 
   var audioCtx = null;
@@ -653,96 +653,15 @@
 
         st.quizQuestions = parsed;
         st.questionsLoaded = parsed.length > 0;
-        st.shuffledQuestions = []; // Reseta a fila
         console.log('Perguntas carregadas:', parsed.length);
         return parsed;
       })
       .catch(function(err) {
         st.quizQuestions = [];
         st.questionsLoaded = false;
-        st.shuffledQuestions = [];
         console.error('Erro ao carregar perguntas.txt:', err);
         return [];
       });
-  }
-
-  // Função para preparar a fila de perguntas do quiz
-  function prepareQuizQueue() {
-    if (st.quizQuestions.length === 0) {
-      return false;
-    }
-    st.shuffledQuestions = shuffleArray(st.quizQuestions);
-    st.isFirstQuizQuestion = true;
-    return true;
-  }
-
-  // Função para pegar a próxima pergunta do quiz
-  function getNextQuizQuestion() {
-    // Se não há perguntas carregadas, tenta recarregar
-    if (st.quizQuestions.length === 0) {
-      loadQuizQuestions().then(function() {
-        if (st.quizQuestions.length > 0) {
-          prepareQuizQueue();
-          displayQuizQuestion();
-        } else {
-          $("questionText").textContent = "Nenhuma pergunta disponível";
-          st.options = ["Voltar", "Sair"];
-          st.correctIdx = 0;
-          st.cursor = 0;
-          st.locked = false;
-          $("optionsGrid").className = "options-grid quiz-mode";
-          renderOptions();
-        }
-      });
-      return null;
-    }
-
-    // Se a fila está vazia, recria e embaralha
-    if (st.shuffledQuestions.length === 0) {
-      if (!prepareQuizQueue()) {
-        return null;
-      }
-    }
-
-    // Pega a próxima pergunta da fila
-    var q = st.shuffledQuestions.shift();
-    
-    // Se por algum motivo a pergunta for undefined, recarrega
-    if (!q) {
-      if (!prepareQuizQueue()) {
-        return null;
-      }
-      q = st.shuffledQuestions.shift();
-    }
-
-    return q;
-  }
-
-  // Função para exibir a pergunta do quiz
-  function displayQuizQuestion() {
-    var q = getNextQuizQuestion();
-    
-    if (!q) {
-      $("questionText").textContent = "Erro ao carregar pergunta";
-      st.options = ["Voltar", "Sair"];
-      st.correctIdx = 0;
-      st.cursor = 0;
-      st.locked = false;
-      $("optionsGrid").className = "options-grid quiz-mode";
-      renderOptions();
-      return;
-    }
-
-    st.currentQuizQuestion = q;
-    st.options = q.o;
-    st.correctIdx = q.c;
-    st.cursor = 0;
-    st.locked = false;
-
-    $("questionText").textContent = q.q;
-    $("playFooter").innerHTML = "Matéria: <span>" + q.m + "</span>";
-    $("optionsGrid").className = "options-grid quiz-mode";
-    renderOptions();
   }
 
   function renderMenu(){
@@ -769,7 +688,7 @@
       if (!st.questionsLoaded || st.quizQuestions.length === 0) {
         $("menuRecord").innerHTML = "Banco de perguntas não carregado";
       } else {
-        $("menuRecord").innerHTML = "Melhor sequência Quiz: <span>" + st.bestQuizStreak + "</span> | Total: " + st.quizQuestions.length + " questões";
+        $("menuRecord").innerHTML = "Melhor sequência Quiz: <span>" + st.bestQuizStreak + "</span>";
       }
     } else {
       $("rangeContainer").style.display = "block";
@@ -805,8 +724,12 @@
     st.streak = 0; st.timeLeft = 60; st.currentLevel = 1;
     st.scene = "play"; st.paused = false; st.exitPending = false;
     st.fuseBurning = true; st.bombExploded = false;
-    st.shuffledQuestions = []; // Reseta a fila
-    st.isFirstQuizQuestion = true; // Reseta flag
+
+    // Para o modo quiz, embaralha as perguntas e reseta o índice
+    if (modeKey() === "quiz" && st.quizQuestions.length > 0) {
+      st.shuffledQuizQuestions = shuffleArray(st.quizQuestions);
+      st.quizIndex = 0;
+    }
 
     $("pauseOverlay").classList.add("hidden");
     $("exitOverlay").classList.add("hidden");
@@ -820,22 +743,6 @@
     }
 
     updateStatusBar();
-    
-    // Se for modo quiz, prepara a fila de perguntas
-    if (modeKey() === "quiz") {
-      if (st.quizQuestions.length > 0) {
-        prepareQuizQueue();
-      } else {
-        loadQuizQuestions().then(function() {
-          if (st.quizQuestions.length > 0) {
-            prepareQuizQueue();
-          }
-          nextQuestion();
-        });
-        return;
-      }
-    }
-    
     nextQuestion();
     playSound(440, 0.05, 'square', 0.05);
   }
@@ -946,10 +853,50 @@
 
   function nextQuestion(){
     if (modeKey() === "quiz") {
-      displayQuizQuestion();
+      // Verifica se a lista de perguntas foi carregada
+      if (st.quizQuestions.length === 0) {
+        $("questionText").textContent = "Carregando perguntas...";
+        st.options = ["Aguarde", "..."];
+        st.correctIdx = 0;
+        st.cursor = 0;
+        st.locked = false;
+        $("optionsGrid").className = "options-grid quiz-mode";
+        renderOptions();
+        return;
+      }
+
+      // Se não tem lista embaralhada ou chegou no fim, recria
+      if (!st.shuffledQuizQuestions || st.shuffledQuizQuestions.length === 0) {
+        st.shuffledQuizQuestions = shuffleArray(st.quizQuestions);
+        st.quizIndex = 0;
+      }
+
+      // Pega a próxima pergunta da lista
+      var q = st.shuffledQuizQuestions[st.quizIndex % st.shuffledQuizQuestions.length];
+      st.quizIndex++;
+
+      // Se chegou no fim da lista, recria e reinicia o índice
+      if (st.quizIndex >= st.shuffledQuizQuestions.length) {
+        st.shuffledQuizQuestions = shuffleArray(st.quizQuestions);
+        st.quizIndex = 0;
+        q = st.shuffledQuizQuestions[0];
+        st.quizIndex = 1;
+      }
+
+      st.currentQuizQuestion = q;
+      st.options = q.o;
+      st.correctIdx = q.c;
+      st.cursor = 0;
+      st.locked = false;
+
+      $("questionText").textContent = q.q;
+      $("playFooter").innerHTML = "Sequência: <span>" + st.streak + "</span> | Matéria: <span>" + q.m + "</span>";
+      $("optionsGrid").className = "options-grid quiz-mode";
+      renderOptions();
       return;
     }
 
+    // Modo Treino ou Bomba (geração aleatória de tabuada)
     var max = RANGES[st.rangeIdx];
     var a = 1 + Math.floor(Math.random()*max);
     var b = 1 + Math.floor(Math.random()*max);
@@ -1059,9 +1006,6 @@
     if (modeKey() !== "quiz") {
       $("streakDisplay").textContent = st.streak;
       $("levelDisplay").textContent = st.currentLevel;
-    } else {
-      // No modo quiz, atualiza apenas o streak counter
-      $("playFooter").innerHTML = "Sequência: <span>" + st.streak + "</span> | Matéria: <span>" + (st.currentQuizQuestion ? st.currentQuizQuestion.m : "") + "</span>";
     }
 
     setTimeout(function(){
