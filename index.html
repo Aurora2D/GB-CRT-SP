@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Tabuada Boy - Evolution</title>
+
+<link class="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAOFJREFUWEftlkEOgyAQRQc3brx5D7yDN3Djxhu48cYbWJfGHfeGxobSqYAi1cWmZv7wm5lJnA8AJnAFJtBWuM6rSADh+9WB+exAhFOK9Lt1tmaSXjKAHIwKtOiu1ukjhHwAeRwI8bQQn/MAPdRZAegBllnHf7CfMcUUU0wxxRRTTLGfxR4yi70TfcusXpxBslwjjUj7lo5UikUjU3rqW7nrKyGVIqN7TIdRjRrVMgywLLHl/wbgExj69WH2sjeGGFNAuDowVKdax6jQGd9aMgU6HrkgZQ7hfbp8byiYBLO0pUCuWKlSEPtcynNPg1H9xK4AAAAASUVORK5CYII=">
+
+<style>
+  :root{
+    --case:#c9c6bb;
+    --case-dark:#aba894;
+    --bezel:#4f5a3f;
+    --lcd:#9bbc0f;
+    --lcd-mid:#8bac0f;
+    --lcd-ink:#0f380f;
+    --btn-grey:#787569;
+    --btn-grey-dark:#5c594f;
+    --green:#8B1D40;
+    --green-dark:#6a1630;
+    --red:#8B1D40;
+    --red-dark:#6a1630;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-font-smoothing:none;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;}
+  body{
+    background:#3d3b34;
+    color:var(--lcd-ink);
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    height:100dvh;
+  }
+
+  .console{
+    width:min(98vw, 98dvh * 0.6);
+    height:min(98dvh, 98vw / 0.6);
+    background:linear-gradient(180deg,var(--case),var(--case-dark));
+    border-radius:18px;
+    display:flex;
+    flex-direction:column;
+    padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 12px);
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+  }
+
+  .brand-row{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    padding-bottom:8px;
+  }
+  .led{width:8px;height:8px;border-radius:50%;background:#a3413a;box-shadow:0 0 5px #d4655c;}
+  .brand{font-style:italic; font-weight:800; font-size:12px; letter-spacing:.03em; color:#4f5a3f;}
+  .brand span{color:#8B1D40;}
+
+  .screen-bezel{
+    background:var(--bezel);
+    border-radius:10px;
+    padding:10px;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.5);
+    flex:1 1 55%;
+    display:flex;
+    min-height:0;
+  }
+  .lcd{
+    background:
+      repeating-linear-gradient(rgba(15,56,15,.06) 0 2px, transparent 2px 4px),
+      var(--lcd);
+    color:var(--lcd-ink);
+    border-radius:5px;
+    padding:12px;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    box-shadow:inset 0 0 0 2px rgba(15,56,15,.15);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .status-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:11px; font-weight:700; letter-spacing:.03em;
+    margin-bottom:6px; text-transform:uppercase;
+    flex-shrink:0;
+  }
+  .status-bar .hearts{letter-spacing:2px;}
+
+  .lcd-body{
+    flex:1; 
+    display:flex; 
+    flex-direction:column; 
+    min-height:0; 
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* ---- MENU screen ---- */
+  .menu-title{
+    font-size:clamp(18px,5vw,26px);
+    font-weight:800;
+    text-align:center;
+    margin:4px 0 2px;
+    letter-spacing:.04em;
+    line-height:1.1;
+  }
+  .menu-sub{font-size:10px; text-align:center; opacity:.75; margin-bottom:8px;}
+  .menu-row{margin-bottom:8px;}
+  .menu-row-label{font-size:9px; text-transform:uppercase; letter-spacing:.08em; opacity:.7; margin-bottom:2px;}
+  .menu-options{display:flex; gap:4px; flex-wrap:wrap;}
+  .menu-opt{
+    flex:1 1 45%;
+    text-align:center;
+    padding:5px 3px;
+    border:2px solid rgba(15,56,15,.3);
+    border-radius:6px;
+    font-size:11px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .menu-opt.on{background:var(--lcd-ink); color:var(--lcd); border-color:var(--lcd-ink);}
+  .menu-hint{margin-top:auto; font-size:9px; text-align:center; opacity:.7; line-height:1.4;}
+  .help-box{font-size:11px; line-height:1.5; padding-top:2px;}
+
+  /* ---- PLAY screen ---- */
+  .question-area{
+    flex: 4;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:0;
+    overflow:hidden;
+    padding:4px 0;
+  }
+  .question{
+    font-size:clamp(14px,3.2vw,20px);
+    font-weight:800;
+    text-align:center;
+    word-break:break-word;
+    line-height:1.3;
+    max-height:100%;
+    overflow-y:auto;
+    padding:0 4px;
+  }
+  
+  /* Area da Bomba */
+  .bomb-area{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+    height:40px;
+    flex-shrink:0;
+  }
+  
+  /* Canvas do Sprite / Desenho da Bomba */
+  .bomb-canvas{
+    width:160px;
+    height:40px;
+    image-rendering:pixelated;
+  }
+
+  .options-area{
+    flex: 1;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-height:0;
+    padding-top:4px;
+  }
+  .options-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    flex:1;
+    min-height:0;
+  }
+  .options-grid.quiz-mode{
+    grid-template-columns:1fr 1fr;
+  }
+  .opt-cell{
+    border:2px solid rgba(15,56,15,.35);
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:clamp(11px,2.8vw,14px);
+    font-weight:700;
+    padding:4px 6px;
+    text-align:center;
+    word-break:break-word;
+    min-height:0;
+  }
+  .opt-cell.cursor{
+    background:var(--lcd-ink); color:var(--lcd);
+    border-color:var(--lcd-ink);
+  }
+  .opt-cell.eliminated{opacity:.15;}
+
+  /* ---- overlays ---- */
+  .overlay{
+    position:absolute; inset:0;
+    background:rgba(155,188,15,.97);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:12px;
+    border-radius:5px;
+    z-index:15;
+  }
+  .overlay.hidden{display:none;}
+  .overlay h2{font-size:18px; margin:0 0 6px; letter-spacing:.05em;}
+  .overlay p{font-size:11px; margin:2px 0; line-height:1.4;}
+  .overlay .actions{margin-top:10px; font-size:10px; opacity:.85;}
+
+  /* ---- controls ---- */
+  .controls{flex:0 0 auto; padding-top:10px;}
+  .dpad-row{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+
+  .dpad{
+    position:relative;
+    width:110px; height:110px;
+    flex:0 0 110px;
+  }
+  .dpad-btn{
+    position:absolute;
+    background:var(--btn-grey-dark);
+    display:flex; align-items:center; justify-content:center;
+    color:#e4e2d8; font-size:14px; font-weight:700;
+    cursor:pointer; user-select:none;
+  }
+  .dpad-btn:active{background:#443f38;}
+  .dpad-up{top:0; left:36px; width:38px; height:37px; border-radius:6px 6px 0 0;}
+  .dpad-down{bottom:0; left:36px; width:38px; height:37px; border-radius:0 0 6px 6px;}
+  .dpad-left{left:0; top:36px; width:37px; height:38px; border-radius:6px 0 0 6px;}
+  .dpad-right{right:0; top:36px; width:37px; height:38px; border-radius:0 6px 6px 0;}
+  .dpad-center{position:absolute; left:36px; top:36px; width:38px; height:38px; background:var(--btn-grey-dark);}
+
+  /* Game Boy original AB Buttons diagonal layout */
+  .ab-area{
+    display:flex; 
+    position:relative;
+    width:130px; 
+    height:90px;
+  }
+  .ab-col{
+    position:absolute;
+    display:flex; 
+    flex-direction:column; 
+    align-items:center;
+  }
+  .ab-col.b-col {
+    left:0;
+    bottom:0;
+  }
+  .ab-col.a-col {
+    right:0;
+    top:0;
+  }
+  
+  .ab-btn{
+    width:52px; height:52px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:800; color:#f2f0e8;
+    cursor:pointer; box-shadow:0 4px 0 rgba(0,0,0,.3);
+    user-select:none;
+  }
+  .ab-btn:active{transform:translateY(2px); box-shadow:0 2px 0 rgba(0,0,0,.3);}
+  .ab-btn.b{background:var(--green);}
+  .ab-btn.a{background:var(--red);}
+  .ab-sub{font-size:8px; text-align:center; margin-top:2px; color:#4f5a3f; letter-spacing:.05em; text-transform:uppercase;}
+
+  .ss-row{display:flex; justify-content:center; gap:20px; margin-top:10px;}
+  .ss-btn{
+    padding:8px 16px; border-radius:14px; background:var(--btn-grey-dark);
+    color:#e4e2d8; font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+    cursor:pointer; transform:rotate(-8deg); box-shadow:0 3px 0 rgba(0,0,0,.25);
+    user-select:none;
+  }
+  .ss-btn:active{transform:rotate(-8deg) translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.25);}
+
+  .view{display:none;}
+  .view.active{display:flex; flex-direction:column; flex:1; min-height:0;}
+
+  /* --- feedback pixel: caixa simples (acerto) x balão de grito HQ (erro) --- */
+  .feedback-pixel{
+    position:absolute;
+    top:45%; left:50%; transform:translate(-50%,-50%);
+    background:var(--lcd-ink);
+    color:var(--lcd);
+    font-weight:800;
+    letter-spacing:.05em;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity 0.1s ease;
+    z-index:20;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    white-space:nowrap;
+  }
+  .feedback-pixel.show{
+    opacity:1;
+  }
+  .feedback-pixel.fb-correct{
+    flex-direction:row;
+    padding:14px 24px;
+    border-radius:5px;
+    border:2px solid var(--lcd);
+    box-shadow:0 0 0 2px var(--lcd-ink), 0 0 0 4px var(--lcd);
+    font-size:clamp(16px,4vw,21px);
+    gap:12px;
+  }
+  .feedback-pixel.fb-wrong{
+    padding:34px 30px;
+    border:3px solid var(--lcd);
+    clip-path: polygon(50.0% 0.0%, 62.2% 20.4%, 85.4% 14.6%, 79.6% 37.8%, 100.0% 50.0%, 79.6% 62.2%, 85.4% 85.4%, 62.2% 79.6%, 50.0% 100.0%, 37.8% 79.6%, 14.6% 85.4%, 20.4% 62.2%, 0.0% 50.0%, 20.4% 37.8%, 14.6% 14.6%, 37.8% 20.4%);
+    font-size:clamp(17px,4.5vw,23px);
+    transform:translate(-50%,-50%) rotate(-3deg);
+  }
+  .feedback-pixel.fb-wrong .feedback-emoji{ font-size:clamp(18px,3.6vw,24px); }
+  .feedback-emoji{
+    font-size:clamp(20px,4vw,28px);
+    line-height:1;
+    font-family:monospace;
+    color:var(--lcd);
+  }
+
+  /* --- tela de iniciais (ranking) --- */
+  .initials-wrap{display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:6px;}
+  .initials-slots{display:flex; gap:12px; margin:10px 0 4px;}
+  .initial-slot{
+    width:42px; height:52px;
+    border:2px solid rgba(15,56,15,.35);
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px; font-weight:800;
+  }
+  .initial-slot.active{background:var(--lcd-ink); color:var(--lcd); border-color:var(--lcd-ink);}
+
+  /* --- ranking no menu --- */
+  .ranking-box{display:none; text-align:center; font-size:9px; margin:2px 0 8px; line-height:1.6;}
+  .ranking-box .ranking-title{text-transform:uppercase; letter-spacing:.08em; opacity:.7; margin-bottom:2px; font-size:9px;}
+  .ranking-row{display:flex; justify-content:space-between; padding:0 26px; font-weight:700; font-size:10px;}
+  .footer-hearts{letter-spacing:3px; font-size:11px;}
+
+  /* Quiz footer */
+  #playFooter {
+    font-size:9px;
+    margin-top:3px;
+    opacity:0.7;
+    max-height:1.6em;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+</style>
+</head>
+<body>
+<div class="console">
+  <div class="brand-row">
+    <div class="led" id="led"></div>
+    <div class="brand">TABUADA BOY<span>&#9679;</span>EVO</div>
+  </div>
+
+  <div class="screen-bezel">
+    <div class="lcd">
+      <div class="status-bar">
+        <span id="statModeName">MENU</span>
+        <span id="statRight"></span>
+      </div>
+
+      <div class="lcd-body">
+
+        <!-- MENU -->
+        <div class="view active" id="view-menu">
+          <div class="menu-title">TABUADA BOY</div>
+          <div class="menu-sub">cima/baixo: escolha &middot; select: mudar</div>
+
+          <div class="menu-row">
+            <div class="menu-row-label">Modo</div>
+            <div class="menu-options" id="modeOptions"></div>
+          </div>
+          <div class="menu-row" id="rangeContainer">
+            <div class="menu-row-label">Tabuada</div>
+            <div class="menu-options" id="rangeOptions"></div>
+          </div>
+
+          <div id="menuRecord" style="text-align:center; font-size:10px; margin:4px 0; opacity:0.8;">
+            Melhor sequência: <span id="recordDisplay">0</span>
+          </div>
+
+          <div class="ranking-box" id="rankingBox">
+            <div class="ranking-title">&#127942; Ranking Quiz</div>
+            <div id="rankingList">Carregando&hellip;</div>
+          </div>
+
+          <div class="help-box" id="helpBox" style="display:none;">
+            D-pad seleciona a resposta. A confirma &middot; B pula.<br>
+            Bomba: Começa com 60s. Erros e acertos mudam a contagem de acordo com seu nível até desarmar!<br>
+            Quiz: 3 vidas. Cada erro tira 1 vida e 1 ponto (a pontuação não fica negativa). Ao zerar as vidas o jogo acaba e sua pontuação entra pro ranking.
+          </div>
+
+          <div class="menu-hint">A ou START para jogar &middot; B para ajuda</div>
+        </div>
+
+        <!-- INICIAIS (ranking do modo Quiz) -->
+        <div class="view" id="view-initials">
+          <div class="initials-wrap">
+            <div class="menu-title" style="font-size:16px; margin-bottom:0;">RANKING QUIZ</div>
+            <div class="menu-sub" style="margin-bottom:0;">Digite suas iniciais (3 letras)</div>
+            <div class="initials-slots">
+              <span class="initial-slot" id="initSlot0">A</span>
+              <span class="initial-slot" id="initSlot1">A</span>
+              <span class="initial-slot" id="initSlot2">A</span>
+            </div>
+            <div class="menu-hint" style="margin-top:10px;">
+              &#9664; &#9654; muda a posição &middot; &#9650; &#9660; muda a letra<br>
+              A confirma e começa &middot; B volta
+            </div>
+          </div>
+        </div>
+
+        <!-- PLAY -->
+        <div class="view" id="view-play">
+          <div class="bomb-area" id="bombArea">
+            <canvas class="bomb-canvas" id="bombCanvas"></canvas>
+          </div>
+          
+          <div class="question-area">
+            <div class="question" id="questionText">7 x 8</div>
+          </div>
+          
+          <div class="options-area">
+            <div class="options-grid" id="optionsGrid"></div>
+          </div>
+
+          <!-- feedback pixel: caixa simples (acerto) ou balão de grito HQ (erro) -->
+          <div class="feedback-pixel fb-correct" id="feedbackPixel">
+            <span id="feedbackText">ACERTOU!</span>
+            <span class="feedback-emoji" id="feedbackEmoji">☺</span>
+          </div>
+
+          <!-- streak counter -->
+          <div style="text-align:center; font-size:10px; margin-top:4px; opacity:0.7;" id="playFooter">
+            Sequência: <span id="streakDisplay">0</span> | Nível: <span id="levelDisplay">1</span>
+          </div>
+
+          <!-- pause overlay -->
+          <div class="overlay hidden" id="pauseOverlay">
+            <h2>PAUSADO</h2>
+            <p>A &mdash; continuar</p>
+            <p>B &mdash; pular pergunta</p>
+            <p>START &mdash; sair (confirma)</p>
+          </div>
+
+          <!-- exit confirm overlay -->
+          <div class="overlay hidden" id="exitOverlay">
+            <h2>ABANDONAR?</h2>
+            <p>Deseja sair do jogo?</p>
+            <div style="margin-top:12px; display:flex; gap:20px; font-size:14px; font-weight:700; justify-content:center;">
+              <span>A: SIM</span>
+              <span>B: NÃO</span>
+            </div>
+            <div class="actions">START cancela</div>
+          </div>
+        </div>
+
+        <!-- GAME OVER / VITORIA -->
+        <div class="view" id="view-over">
+          <div class="overlay" style="position:static; flex:1; background:transparent;">
+            <h2 id="overTitle">FIM DE JOGO</h2>
+            <p id="overScore">Pontos: 0</p>
+            <p id="overDetail">Acertos: 0 / 0</p>
+            <p style="font-size:10px; margin-top:4px;" id="overRecordText">Melhor sequência: <span id="overRecord">0</span></p>
+            <p style="font-size:9px; margin-top:6px; opacity:.8;" id="overExtra"></p>
+            <div class="actions">A &mdash; jogar de novo &middot; START &mdash; menu</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="dpad-row">
+      <div class="dpad">
+        <div class="dpad-btn dpad-up" id="btnUp">&#9650;</div>
+        <div class="dpad-btn dpad-left" id="btnLeft">&#9664;</div>
+        <div class="dpad-center"></div>
+        <div class="dpad-btn dpad-right" id="btnRight">&#9654;</div>
+        <div class="dpad-btn dpad-down" id="btnDown">&#9660;</div>
+      </div>
+
+      <!-- Game Boy diagonal button layout -->
+      <div class="ab-area">
+        <div class="ab-col b-col">
+          <div class="ab-btn b" id="btnB">B</div>
+          <div class="ab-sub" id="labelB">B</div>
+        </div>
+        <div class="ab-col a-col">
+          <div class="ab-btn a" id="btnA">A</div>
+          <div class="ab-sub" id="labelA">A</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ss-row">
+      <div class="ss-btn" id="btnSelect">Select</div>
+      <div class="ss-btn" id="btnStart">Start</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // ---- Firebase (ranking do modo Quiz) ----
+  var firebaseConfig = {
+    apiKey: "AIzaSyC8PYnJS6P5mhrZgGTuq4aZPvqfZRxrzJ0",
+    authDomain: "tabuada-boy-ranking-fb49a.firebaseapp.com",
+    databaseURL: "https://tabuada-boy-ranking-fb49a-default-rtdb.firebaseio.com",
+    projectId: "tabuada-boy-ranking-fb49a",
+    storageBucket: "tabuada-boy-ranking-fb49a.firebasestorage.app",
+    messagingSenderId: "684072868953",
+    appId: "1:684072868953:web:5c93dcbd609e28c6f6e548"
+  };
+  var rankingRef = null;
+  try {
+    firebase.initializeApp(firebaseConfig);
+    rankingRef = firebase.database().ref("ranking");
+  } catch (e) {
+    console.warn("Firebase indisponível:", e);
+  }
+
+  var ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  var RANGES = [5,10,12];
+  var MODES = [
+    {key:"treino", label:"Treino"},
+    {key:"bomba", label:"Bomba Relógio"},
+    {key:"quiz", label:"Quiz CRT SP"}
+  ];
+
+  // Regras de tempo e punição por nível (nível 1 a 10)
+  var BOMB_LEVELS = [
+    [1, 10], // Nível 1
+    [2, 9],  // Nível 2
+    [3, 7],  // Nível 3
+    [4, 6],  // Nível 4
+    [5, 5],  // Nível 5
+    [6, 4],  // Nível 6
+    [7, 3],  // Nível 7
+    [8, 2],  // Nível 8
+    [9, 1],  // Nível 9
+    [10, 0]  // Nível 10
+  ];
+
+  // ============================================================
+  // BANCO DE QUESTÕES EMBUTIDO (todas as perguntas do arquivo)
+  // ============================================================
+  var EMBEDDED_QUESTIONS = [
+    // Regimento Interno CRT-SP
+    {q:"O CRT-SP é uma pessoa jurídica de direito público sob a forma de autarquia federal.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário Deliberativo do CRT-SP é composto por conselheiros regionais com direito a voz e voto.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A Diretoria Executiva, no Plenário, possui direito a voto, exceto o Presidente que vota apenas em desempate.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Para cada conselheiro titular, será eleito 1 (um) respectivo suplente.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Compete ao Plenário zelar pela dignidade e valorização do exercício profissional dos Técnicos Industriais.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"As reuniões plenárias ordinárias serão realizadas, de preferência, mensalmente.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A convocação para reuniões plenárias ordinárias tem antecedência mínima de 8 (oito) dias úteis.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A convocação para reuniões plenárias extraordinárias tem antecedência mínima de 4 (quatro) dias úteis.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"As pautas das reuniões plenárias devem ser disponibilizadas com 4 (quatro) dias úteis de antecedência.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Reuniões plenárias extraordinárias podem ser convocadas por 2/3 dos membros do Plenário.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"As reuniões plenárias são, em regra, públicas, mas podem ser declaradas sigilosas.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A Comissão de Tomada de Contas e Orçamento é uma comissão de caráter permanente.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Compete à Comissão de Tomada de Contas zelar pelo equilíbrio econômico-financeiro do CRT-SP.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Compete à Comissão de Ética Profissional zelar pelo cumprimento do Código de Ética e Disciplina.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O conselheiro que não comparecer à posse terá 15 dias úteis para ser empossado administrativamente.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O conselheiro tem como prerrogativa pedir vista de matéria submetida à apreciação do Plenário.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário se manifesta sobre assuntos de sua competência mediante deliberação plenária.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"As decisões do Plenário são tomadas, em regra, por maioria simples.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Presidente do CRT-SP exerce exclusivamente voto de desempate no Plenário.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A duração padrão de uma reunião plenária ordinária é de 1 (um) dia.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Reuniões plenárias poderão ser realizadas de maneira virtual, com uso de certificação digital.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Compete ao Plenário criar tabelas indicativas de honorários dos Técnicos Industriais.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O CRT-SP possui natureza jurídica de autarquia federal, conforme a Lei nº 13.639/2018.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A finalidade do CRT-SP inclui orientar, disciplinar e fiscalizar o exercício da profissão do Técnico Industrial.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O CRT-SP exerce ações orientadoras, disciplinadoras, fiscalizadoras, regulamentadoras e judicantes.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário do CRT-SP julga, em primeira instância, as questões propostas pelas comissões permanentes.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Compete ao Plenário autorizar a alienação de bens imóveis de propriedade do CRT-SP.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Compete ao Plenário manter relatórios públicos de suas atividades.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Regimento Interno do CRT-SP deve ser homologado pelo Conselho Federal dos Técnicos Industriais (CFT).", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário do CRT-SP é composto pelo Plenário Deliberativo acrescido da Diretoria Executiva.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Regimento Interno do CRT-SP é composto por 118 artigos.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"As atribuições dos cargos do CRT-SP devem ser regulamentadas em normativo específico.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A posse do conselheiro que não comparecer à cerimônia pode ser feita em até 15 dias úteis.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A Diretoria Executiva, no Plenário, possui direito a voz, e o Presidente apenas voto de desempate.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A Comissão de Fiscalização é uma das comissões ordinárias do CRT-SP.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário manifesta-se sobre seus assuntos mediante ato administrativo chamado deliberação plenária.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A publicação das deliberações plenárias é feita no sítio eletrônico do CRT-SP.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Os empregados do CRT-SP são contratados sob o regime da Consolidação das Leis do Trabalho (CLT).", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A admissão de empregados no CRT-SP deve observar o princípio da impessoalidade.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Compete à Comissão de Tomada de Contas zelar pelo planejamento e equilíbrio econômico-financeiro do CRT-SP.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A Comissão de Ética Profissional zela pela verificação e cumprimento do Código de Ética e Disciplina.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"As reuniões plenárias extraordinárias podem ser convocadas por 2/3 (dois terços) dos membros do Plenário.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O conselheiro tem o direito de pedir vista de matéria submetida à apreciação do Plenário.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário pode deliberar sobre a criação de tabelas indicativas de honorários dos Técnicos Industriais.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"Compete ao Plenário autorizar a alienação de bens imóveis de propriedade do CRT-SP.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O calendário anual de reuniões plenárias é proposto pela Diretoria Executiva e aprovado pelo Plenário.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"As reuniões plenárias ordinárias terão duração de 1 dia, podendo ser prorrogadas por até 2 horas.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"As pautas das reuniões plenárias serão disponibilizadas preferencialmente por meio eletrônico.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Presidente do CRT-SP exerce exclusivamente voto de desempate nas reuniões do Plenário.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A Comissão de Tomada de Contas e Orçamento possui caráter permanente.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O CRT-SP possui natureza jurídica de autarquia federal.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O CRT-SP tem por finalidade orientar, disciplinar e fiscalizar o exercício da profissão do Técnico Industrial.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O mandato dos conselheiros eleitos para o Plenário Deliberativo tem duração de 4 anos.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O CRT-SP possui jurisdição em todo o Estado de São Paulo.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"É permitido ao conselheiro utilizar traje de passeio-esporte nas reuniões plenárias.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário Deliberativo é composto pelos conselheiros regionais com direito a voz e voto.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    {q:"A Diretoria Executiva é composta pelos diretores indicados na Lei nº 13.639/2018.", o:["Certo","Errado"], c:0, m:"Regimento Interno CRT-SP"},
+    // Lei nº 13.639/2018
+    {q:"Compete ao CRT-SP firmar convênios com entidades públicas e privadas.", o:["Certo","Errado"], c:0, m:"Lei nº 13.639/2018"},
+    {q:"O CRT-SP pode firmar parcerias em regime de mútua cooperação com organizações da sociedade civil.", o:["Certo","Errado"], c:0, m:"Lei nº 13.639/2018"},
+    {q:"O CFT decidirá, em última instância, as matérias deliberadas nos Conselhos Regionais.", o:["Certo","Errado"], c:0, m:"Lei nº 13.639/2018"},
+    // Código de Ética (Res. 206/2022)
+    {q:"A conduta do Técnico Industrial deve pautar-se pelos princípios da legalidade, moralidade e impessoalidade.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É vedado ao Técnico Industrial divulgar informações confidenciais sobre seu cliente ou empregador.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial pode aceitar encargo que exceda sua capacidade técnica, desde que seja auxiliado.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O profissional deve declarar sua suspeição ou impedimento nos processos em que atuar.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É dever do Técnico Industrial exercer a profissão com zelo, honestidade e dignidade.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial pode exercer atividades que caracterizem concorrência desleal com outros profissionais.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É dever do profissional atuar de forma a garantir a qualidade e a segurança dos serviços prestados.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O profissional deve recusar a participação em ações que visem a fraudar a lei.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Código de Ética estabelece direitos e deveres para o exercício da profissão de Técnico Industrial.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A publicidade do Técnico Industrial deve ser discreta e conter a identificação do número de registro.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial deve manter conduta pessoal compatível com a dignidade profissional.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A colaboração com a fiscalização do Conselho é um dever do profissional.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É vedado ao profissional utilizar-se de nome de colega para obter vantagens indevidas.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial deve se atualizar para manter-se apto ao exercício profissional.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A violação do sigilo profissional constitui infração ética grave.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O profissional deve promover a divulgação de seus serviços de forma sensacionalista.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É direito do Técnico Industrial exercer a profissão sem ser discriminado.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial deve prestar contas de sua gestão, se for o caso.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A obsolescência de conhecimentos não é justificativa para o exercício inadequado da profissão.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial pode exercer a profissão em área para a qual não está habilitado.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O profissional deve respeitar o cliente, mesmo em situações de conflito.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É vedado ao Técnico Industrial explorar sua posição para fins de promoção pessoal.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A assinatura do Técnico Industrial em obras e serviços implica sua responsabilidade técnica.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial deve orientar seus subordinados sobre os princípios éticos da profissão.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É permitido ao profissional exercer a profissão com a intenção de prejudicar terceiros.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A honestidade é um princípio fundamental da conduta do Técnico Industrial.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O profissional deve contribuir para a valorização da classe dos Técnicos Industriais.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Código de Ética é aplicável a todos os Técnicos Industriais registrados no Sistema CFT/CRTs.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É vedado ao profissional delegar funções a não habilitados que possam caracterizar exercício ilegal da profissão.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial deve agir com lealdade para com seus colegas de profissão.", o:["Certo","Errado"], c:0, m:"Código de Ética (Res. 206/2022)"},
+    // Gestão de Processos
+    {q:"A abordagem por processos visa otimizar a execução das atividades da organização.", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    {q:"O fluxograma é uma ferramenta utilizada para o mapeamento e desenho de processos.", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    {q:"A gestão de processos de negócio é conhecida pela sigla BPM (Business Process Management).", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    {q:"A melhoria contínua de processos utiliza metodologias como o ciclo PDCA (Plan, Do, Check, Act).", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    {q:"Indicadores de desempenho são utilizados para medir a eficácia e eficiência de um processo.", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    {q:"O mapeamento de processos consiste em identificar, descrever e documentar as atividades de um fluxo de trabalho.", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    {q:"A automação de processos é uma das técnicas utilizadas para aumentar a eficiência operacional.", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    {q:"Na gestão de processos, 'entradas' são os recursos necessários para a execução das atividades.", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    {q:"A análise de processos visa identificar gargalos e oportunidades de melhoria.", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    {q:"O desenho de processos define como as atividades devem ser executadas para atingir os objetivos.", o:["Certo","Errado"], c:0, m:"Gestão de Processos"},
+    // Arquivologia
+    {q:"A arquivologia estuda os princípios e técnicas de gestão de documentos.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A teoria das três idades é um princípio fundamental da arquivologia.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"Documentos correntes são aqueles em uso frequente e que tramitam nos setores administrativos.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"Documentos intermediários são aqueles que aguardam sua destinação final, podendo ser eliminados ou guardados permanentemente.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"Documentos permanentes possuem valor histórico e não podem ser eliminados.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"O protocolo é o setor responsável pelo recebimento, registro e distribuição de documentos.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A gestão de documentos abrange tanto documentos físicos quanto digitais.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"São exemplos de métodos de arquivamento: alfabético, numérico e geográfico.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A avaliação de documentos é uma etapa importante para definir seu ciclo de vida e destinação.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A classificação de documentos organiza as informações de acordo com um plano de classificação.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A atividade de protocolo também pode ser realizada com documentos digitais.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"O princípio da proveniência é fundamental na arquivologia e determina que os documentos de um arquivo não se misturem com outros.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A eliminação de documentos deve ser autorizada após análise e avaliação, respeitando a legislação.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A gestão documental visa garantir a eficiência, a transparência e a preservação das informações.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A digitalização de documentos não substitui a necessidade de gestão de documentos físicos.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"Os arquivos públicos são regidos por princípios específicos, incluindo o da publicidade.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A tabela de temporalidade define o prazo de guarda e a destinação final de cada tipo de documento.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"O acesso a documentos de arquivo, em regra, é público, ressalvadas as exceções legais.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"A função de um arquivo intermediário é armazenar documentos que não são mais usados com frequência, mas que ainda podem ser necessários.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    {q:"Os arquivos correntes são também conhecidos como arquivos de primeira idade.", o:["Certo","Errado"], c:0, m:"Arquivologia"},
+    // Direito Administrativo
+    {q:"A Administração Pública direta é composta pela União, Estados, Municípios e DF.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"São entidades da Administração Pública indireta: autarquias, fundações, empresas públicas e sociedades de economia mista.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"A descentralização administrativa pode ocorrer por outorga (criação de entidade) ou delegação (contrato ou ato unilateral).", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"A concentração administrativa ocorre quando as funções são distribuídas entre diversos órgãos da mesma pessoa jurídica.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A desconcentração é a distribuição de competências dentro da mesma pessoa jurídica, criando órgãos.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"Autarquias são pessoas jurídicas de direito público criadas por lei para desempenhar atividades típicas do Estado.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"As fundações públicas podem ser de direito público ou de direito privado.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"As empresas públicas possuem capital exclusivamente público e são pessoas jurídicas de direito privado.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"As sociedades de economia mista possuem capital misto, com maioria do Estado, e são de direito privado.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O princípio da legalidade na Administração Pública significa que o administrador só pode fazer o que a lei autoriza.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O princípio da impessoalidade veda a promoção pessoal de agentes públicos às custas da Administração.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O princípio da moralidade exige probidade, honestidade e boa-fé na atuação do administrador público.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O princípio da publicidade torna obrigatória a divulgação oficial de todos os atos administrativos.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O princípio da eficiência exige que a atividade administrativa seja prestada com qualidade e economicidade.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O poder hierárquico permite à Administração distribuir e escalonar funções e rever a atuação de seus agentes.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O poder disciplinar autoriza a aplicação de penalidades a servidores por infrações funcionais.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O poder regulamentar é a prerrogativa do Chefe do Executivo de editar decretos e regulamentos para fiel execução das leis.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O poder de polícia é a atividade do Estado de limitar direitos individuais em benefício do interesse público.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"São atributos do ato administrativo: presunção de legitimidade, imperatividade e autoexecutoriedade.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"A presunção de legitimidade do ato administrativo é relativa, admitindo prova em contrário.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"A imperatividade do ato administrativo impõe obediência a terceiros independentemente de sua concordância.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"A autoexecutoriedade permite que a Administração execute seus atos independentemente de ordem judicial.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"A anulação do ato administrativo ocorre por razões de conveniência e oportunidade.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A revogação do ato administrativo ocorre por razões de conveniência e oportunidade.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"A convalidação do ato administrativo aproveita o ato com vício sanável, retroagindo seus efeitos.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O excesso de poder é vício de competência, quando o agente atua além de suas atribuições.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"O desvio de poder é vício de finalidade, quando o agente busca fim diverso do interesse público.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"A Administração pode anular seus próprios atos ilegais com base no princípio da autotutela.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"A Súmula 473 do STF consagra o poder de autotutela da Administração Pública.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    {q:"Os atos discricionários podem ser controlados pelo Judiciário quanto à legalidade e aos princípios da proporcionalidade e razoabilidade.", o:["Certo","Errado"], c:0, m:"Direito Administrativo"},
+    // Lei nº 9.784/1999
+    {q:"O processo administrativo federal rege-se, dentre outros, pelos princípios da legalidade, finalidade e motivação.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"São princípios expressos da Lei nº 9.784/1999: razoabilidade, proporcionalidade e eficiência.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"A Lei nº 9.784/1999 garante a ampla defesa e o contraditório nos processos administrativos.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"O administrado tem direito a ser tratado com respeito pelas autoridades e servidores.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"É direito do administrado ter ciência da tramitação dos processos em que for interessado.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"O administrado pode fazer-se assistir por advogado, salvo quando a representação for obrigatória.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"É dever do administrado expor os fatos conforme a verdade.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"O processo administrativo pode iniciar-se de ofício ou a pedido de interessado.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"O requerimento inicial deve conter a identificação do interessado e a formulação do pedido.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"É vedada à Administração a recusa imotivada de recebimento de documentos.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"São legitimados como interessados as pessoas com direitos que possam ser afetados pela decisão.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"Para fins de processo administrativo, são capazes os maiores de dezoito anos.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"A competência administrativa é irrenunciável e se exerce como própria, salvo delegação e avocação.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"Não podem ser objeto de delegação: a edição de atos normativos e a decisão de recursos.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"A avocação temporária de competência é permitida em caráter excepcional e por motivos relevantes.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"É impedido de atuar o servidor que tenha interesse direto ou indireto na matéria.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"A omissão do dever de comunicar o impedimento constitui falta grave.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"Pode ser arguida a suspeição de autoridade que tenha amizade íntima com interessado.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"Os atos do processo devem ser produzidos por escrito, em vernáculo, com data e assinatura.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"Os atos do processo devem realizar-se em dias úteis, no horário normal de funcionamento.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"Os interessados têm direito a vista dos autos e a obter cópias de documentos.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"A Administração deve observar o critério de adequação entre meios e fins.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"É garantida a interposição de recursos administrativos nos processos de que possam resultar sanções.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"É proibida a cobrança de despesas processuais, ressalvadas as previstas em lei.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"O processo deve ser impulsionado de ofício, sem prejuízo da atuação dos interessados.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"A Lei nº 9.784/1999 aplica-se aos órgãos dos Poderes Legislativo e Judiciário no desempenho de função administrativa.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"É vedada a aplicação retroativa de nova interpretação da norma administrativa.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"A Lei nº 9.784/1999 possibilita a interposição de apenas dois recursos administrativos sucessivos.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"Inexistindo competência legal específica, o processo deve ser iniciado perante a autoridade de menor grau hierárquico.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    {q:"O recurso administrativo será dirigido à autoridade que proferiu a decisão.", o:["Certo","Errado"], c:0, m:"Lei nº 9.784/1999"},
+    // Lei 14.133/2021
+    {q:"A Lei nº 14.133/2021 estabelece normas gerais de licitação e contratação para a Administração Pública.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"São princípios da nova Lei de Licitações: legalidade, impessoalidade, moralidade, publicidade e eficiência.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133/2021 substituiu a antiga Lei nº 8.666/1993 e a Lei do Pregão (10.520/2002).", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O Portal Nacional de Contratações Públicas (PNCP) é o sítio eletrônico oficial para divulgação dos atos da Lei 14.133.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133/2021 aplica-se à Administração Pública direta, autárquica e fundacional da União, Estados e Municípios.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O planejamento prévio é obrigatório na Lei 14.133, com estudos técnicos e análise de riscos.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A inversão de fases na licitação permite o julgamento das propostas antes da habilitação.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 criou a modalidade de licitação chamada diálogo competitivo.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O diálogo competitivo é voltado para contratações complexas.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A transparência na Lei 14.133 exige a publicação eletrônica obrigatória de todos os atos licitatórios.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 fortaleceu as regras de governança e responsabilização dos gestores públicos.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 exige a separação das funções de fiscal e gestor de contratos.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 determina a utilização de meios eletrônicos em todas as etapas do processo licitatório.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A nova Lei de Licitações entrou em vigor em abril de 2021.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133/2021 revogou a Lei 8.666/1993 e a Lei do Pregão (10.520/2002).", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A nova Lei de Licitações criou a modalidade de licitação chamada 'diálogo competitivo'.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O Portal Nacional de Contratações Públicas (PNCP) é a plataforma oficial para divulgação dos atos da Lei 14.133.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A matriz de riscos é obrigatória em contratos de obras e serviços de engenharia de grande vulto.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Em contratações de grande vulto, o contratado deve implantar programa de integridade em até seis meses.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A inversão de fases permite o julgamento das propostas antes da habilitação dos licitantes.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 exige planejamento prévio com estudos técnicos e análise de riscos.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 incentiva a digitalização para garantir agilidade e rastreabilidade nas licitações.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 fortaleceu as regras de governança e responsabilização dos gestores públicos.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O processo licitatório na Lei 14.133 inclui as fases de preparação, edital, propostas e julgamento.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A nova Lei de Licitações busca modernizar e unificar as regras de contratação pública.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 exige a divulgação de atos licitatórios para fortalecer o controle social.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A gestão de contratos na Lei 14.133 é orientada por indicadores de desempenho.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A análise de riscos é obrigatória na fase de planejamento das licitações pela Lei 14.133.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 incentiva a digitalização para garantir agilidade e rastreabilidade nas licitações.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    // Lei 12.527/2011 (LAI)
+    {q:"A Lei de Acesso à Informação (LAI) estabelece que a publicidade é a regra e o sigilo é a exceção.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"A transparência ativa na LAI é o dever de divulgar informações de forma espontânea.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"A transparência passiva na LAI ocorre mediante solicitação do cidadão.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"O prazo para resposta a pedido de informação na LAI é de 20 dias, prorrogáveis por mais 10 dias.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"Informações pessoais relativas à intimidade e vida privada são restritas pela LAI.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"O pedido de acesso à informação deve especificar o objeto de forma clara e precisa.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"São vedados pedidos genéricos, desproporcionais ou que exijam produção de dados na LAI.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"O recurso contra negativa de acesso na LAI é dirigido à autoridade superior.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"A informação classificada como ultrassecreta tem prazo máximo de restrição de 25 anos na LAI.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"A autoridade máxima do órgão é uma das instâncias recursais na LAI.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    {q:"A Controladoria Geral da União (CGU) atua na análise de recursos da LAI.", o:["Certo","Errado"], c:0, m:"Lei 12.527/2011"},
+    // Lei nº 8.429/1992 (Improbidade Administrativa)
+    {q:"A Lei de Improbidade Administrativa tutela a probidade na organização do Estado.", o:["Certo","Errado"], c:0, m:"Lei nº 8.429/1992"},
+    {q:"A Lei de Improbidade Administrativa exige conduta dolosa para caracterização do ato.", o:["Certo","Errado"], c:0, m:"Lei nº 8.429/1992"},
+    {q:"O mero exercício da função pública afasta a responsabilidade por improbidade sem dolo.", o:["Certo","Errado"], c:0, m:"Lei nº 8.429/1992"},
+    {q:"Constitui ato de improbidade o recebimento de vantagem patrimonial indevida em razão do cargo.", o:["Certo","Errado"], c:0, m:"Lei nº 8.429/1992"},
+    {q:"A divergência interpretativa da lei, baseada em jurisprudência, não configura improbidade.", o:["Certo","Errado"], c:0, m:"Lei nº 8.429/1992"},
+    {q:"O agente público é definido como todo aquele que exerce mandato, cargo ou função pública.", o:["Certo","Errado"], c:0, m:"Lei nº 8.429/1992"},
+    {q:"O sucessor do agente que causar dano ao erário responde até o limite da herança recebida.", o:["Certo","Errado"], c:0, m:"Lei nº 8.429/1992"},
+    // Lei nº 13.709/2018 (LGPD)
+    {q:"A LGPD protege os direitos fundamentais de liberdade e privacidade das pessoas naturais.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"Dado pessoal é a informação relacionada à pessoa natural identificada ou identificável.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"Dado pessoal sensível inclui origem racial, convicção religiosa e opinião política.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"Dado pessoal sensível inclui dados sobre saúde, vida sexual e dados biométricos.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O tratamento de dados é toda operação realizada com dados pessoais.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O controlador é quem decide sobre o tratamento de dados pessoais.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O operador realiza o tratamento de dados em nome do controlador.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O encarregado atua como canal de comunicação entre controlador, titulares e ANPD.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"A ANPD é a Autoridade Nacional de Proteção de Dados, responsável pela fiscalização da LGPD.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O consentimento para tratamento de dados deve ser livre, informado e inequívoco.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O titular dos dados pode revogar o consentimento a qualquer momento.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"Dado anonimizado é aquele que não pode mais identificar a pessoa natural.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"A LGPD se aplica a pessoas jurídicas de direito público e privado.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"A LGPD se aplica a dados coletados em meio físico ou digital.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"A Administração Pública pode tratar dados sem consentimento para execução de políticas públicas.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"A LGPD entrou em vigor em setembro de 2020.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"A violação de dados exige comunicação ao titular e à ANPD.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O princípio da finalidade exige que o tratamento tenha propósito legítimo e específico.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O princípio da adequação exige compatibilidade do tratamento com a finalidade informada.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O princípio da necessidade limita o tratamento ao mínimo necessário para a finalidade.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O princípio da transparência garante ao titular informações claras sobre o tratamento.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"A LGPD não se aplica a dados para fins exclusivos de segurança pública.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    {q:"O titular tem direito à confirmação da existência de tratamento de seus dados.", o:["Certo","Errado"], c:0, m:"Lei nº 13.709/2018"},
+    // Administração de Materiais
+    {q:"A gestão de almoxarifado é essencial para o controle interno e prevenção de improbidade administrativa.", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    {q:"O inventário de suprimentos e equipamentos é atualizado para garantir a correta utilização dos recursos.", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    {q:"O controle de estoque deve ser organizado de acordo com a PEPS (Primeiro que Entra, Primeiro que Sai).", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    {q:"A gestão do patrimônio público envolve o controle de bens móveis e imóveis da Administração.", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    {q:"A guarda e conservação de equipamentos são atribuições da administração de materiais.", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    {q:"O almoxarifado deve manter estoque mínimo de suprimentos para evitar desabastecimento.", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    {q:"O recebimento de mercadorias no almoxarifado exige conferência quantitativa e qualitativa.", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    {q:"A gestão de materiais inclui o planejamento e controle de suprimentos e equipamentos.", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    {q:"O termo de responsabilidade técnica (TRT) é um documento de controle patrimonial.", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    {q:"A alienação de bens imóveis do CRT-SP deve ser autorizada pelo Plenário.", o:["Certo","Errado"], c:0, m:"Adm. de Materiais"},
+    // Gestão de Pessoas
+    {q:"A gestão de pessoas tem como finalidade alcançar objetivos organizacionais e individuais.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    {q:"Segundo Chiavenato, a gestão de pessoas é um conjunto integrado de atividades de especialistas e gestores.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    {q:"O processo de agregar pessoas inclui planejamento de RH, recrutamento e seleção.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    {q:"O recrutamento interno atua sobre candidatos já integrantes da organização.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    {q:"O recrutamento externo atua sobre candidatos que estão no mercado de trabalho.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    {q:"Aplicar pessoas envolve desenho de cargos, análise e descrição de cargos e avaliação de desempenho.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    {q:"Recompensar pessoas inclui remuneração, benefícios e serviços sociais.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    {q:"Desenvolver pessoas envolve treinamento, gestão do conhecimento e planejamento de sucessão.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    {q:"Manter pessoas envolve administração da cultura organizacional, clima e qualidade de vida.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    {q:"Monitorar pessoas envolve bancos de dados e sistemas de informações gerenciais.", o:["Certo","Errado"], c:0, m:"Gestão de Pessoas"},
+    // Contratos Administrativos (Lei 14.133/2021 - complemento)
+    {q:"O contrato administrativo é o acordo formal firmado pela Administração Pública para atingir objetivos de interesse público.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Os contratos administrativos devem ser formalizados por escrito, com cláusulas que definam direitos e obrigações das partes.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O objeto do contrato e seus elementos característicos são cláusulas essenciais previstas na Lei 14.133/2021.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A vinculação ao edital de licitação e à proposta do vencedor é uma cláusula obrigatória nos contratos administrativos.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A matriz de riscos é obrigatória em contratos de obras e serviços de engenharia de grande vulto.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A possibilidade de subcontratação deve estar expressamente prevista no contrato com suas regras e limites.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O preço contratual deve ser expresso na moeda corrente nacional, compreendendo todos os custos da contratação.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Os critérios de medição e pagamento são cláusulas obrigatórias nos contratos administrativos.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O reajustamento de preços deve ter periodicidade anual e índice específico previsto no contrato.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Nos contratos de serviços contínuos com dedicação exclusiva de mão de obra, o reajuste ocorre por repactuação.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O contratado deve manter durante a execução do contrato todas as condições exigidas para a habilitação.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"É vedado ao contratado contratar parente de dirigente do órgão contratante até o terceiro grau.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O contratado deve cumprir exigências de reserva de cargos para pessoas com deficiência e reabilitados.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Em contratações de grande vulto, o contratado deve implantar programa de integridade em até seis meses.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Administração pode extinguir unilateralmente o contrato por descumprimento das cláusulas contratuais.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A extinção unilateral exige autorização escrita e fundamentada da autoridade competente.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O processo de extinção unilateral deve garantir ao contratado o contraditório e a ampla defesa.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Na extinção unilateral, a Administração pode assumir imediatamente o objeto do contrato.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Na extinção unilateral, a Administração pode ocupar provisoriamente as instalações e equipamentos do contratado.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A ocupação provisória exige autorização do ministro, secretário estadual ou municipal competente.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Administração pode executar a garantia contratual para ressarcimento de prejuízos na extinção unilateral.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Administração pode reter créditos do contratado até o limite dos prejuízos causados.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A finalidade dos contratos administrativos é sempre o interesse público.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Os contratos administrativos são regidos por cláusulas exorbitantes que dão prerrogativas à Administração.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A Administração deve observar os princípios da razoabilidade e proporcionalidade ao extinguir contratos unilateralmente.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A extinção unilateral não pode ocorrer por descumprimento decorrente de conduta da própria Administração.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Os emitentes de garantia devem ser notificados sobre processo de descumprimento contratual.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Em vez de executar diretamente, a Administração pode contratar terceiro, incluindo licitantes remanescentes.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    // ============================================================
+    // QUESTÕES ADICIONAIS (afirmações INCORRETAS sobre os mesmos temas)
+    // ============================================================
+    {q:"O CRT-SP é uma pessoa jurídica de direito privado, sob a forma de fundação.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário Deliberativo é composto exclusivamente pela Diretoria Executiva.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"A Diretoria Executiva possui direito a voto amplo e irrestrito no Plenário, inclusive o Presidente.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"Para cada conselheiro titular, serão eleitos 2 (dois) suplentes.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"Compete exclusivamente à Diretoria Executiva zelar pela dignidade da profissão, sem participação do Plenário.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"As reuniões plenárias ordinárias serão realizadas, obrigatoriamente, a cada 15 dias.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"A convocação para reuniões plenárias ordinárias tem antecedência mínima de 30 dias corridos.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"A convocação para reuniões plenárias extraordinárias tem antecedência mínima de 15 dias úteis.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"As pautas das reuniões plenárias podem ser disponibilizadas no mesmo dia da reunião, sem prazo mínimo.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"Reuniões plenárias extraordinárias só podem ser convocadas pelo Presidente, isoladamente.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"As reuniões plenárias são sempre sigilosas, não podendo ser públicas em nenhuma hipótese.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"A Comissão de Tomada de Contas e Orçamento tem caráter temporário, sendo extinta a cada gestão.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"Compete à Comissão de Ética Profissional zelar pelo equilíbrio econômico-financeiro do CRT-SP.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O conselheiro que não comparecer à posse perde automaticamente o mandato, sem possibilidade de posse posterior.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O conselheiro não possui a prerrogativa de pedir vista de matéria submetida ao Plenário.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário se manifesta sobre assuntos de sua competência exclusivamente por meio de portarias.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"As decisões do Plenário são tomadas, em regra, por maioria absoluta de dois terços.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O Presidente do CRT-SP possui direito a voto amplo em todas as deliberações, além do voto de desempate.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"A duração padrão de uma reunião plenária ordinária é de 3 (três) dias consecutivos.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"Reuniões plenárias virtuais são expressamente proibidas pelo Regimento Interno do CRT-SP.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"Compete exclusivamente à Diretoria Executiva criar tabelas indicativas de honorários dos Técnicos Industriais.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O CRT-SP possui natureza jurídica de autarquia estadual, vinculada à Secretaria de Estado.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"A finalidade do CRT-SP restringe-se a arrecadar anuidades dos profissionais registrados.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O CRT-SP exerce exclusivamente ações fiscalizadoras, não possuindo função disciplinadora.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O Plenário do CRT-SP julga, em única e última instância, todas as questões éticas, sem possibilidade de recurso ao CFT.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"Compete ao Plenário autorizar a alienação de bens imóveis apenas mediante decisão isolada do Presidente.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"Compete à Diretoria Executiva manter relatórios sigilosos de suas atividades, vedado o acesso ao Plenário.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O Regimento Interno do CRT-SP independe de homologação pelo Conselho Federal dos Técnicos Industriais (CFT).", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"O Regimento Interno do CRT-SP é composto por 45 artigos.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"As atribuições dos cargos do CRT-SP são livremente definidas por cada conselheiro, sem normativo específico.", o:["Certo","Errado"], c:1, m:"Regimento Interno CRT-SP"},
+    {q:"Compete ao CRT-SP firmar convênios exclusivamente com entidades privadas, sendo vedada parceria com entes públicos.", o:["Certo","Errado"], c:1, m:"Lei nº 13.639/2018"},
+    {q:"O CRT-SP está impedido de estabelecer parcerias em regime de mútua cooperação com organizações da sociedade civil.", o:["Certo","Errado"], c:1, m:"Lei nº 13.639/2018"},
+    {q:"O CFT não possui competência para decidir, em última instância, matérias deliberadas pelos Conselhos Regionais.", o:["Certo","Errado"], c:1, m:"Lei nº 13.639/2018"},
+    {q:"A conduta do Técnico Industrial deve pautar-se exclusivamente pelo princípio da eficiência, sendo dispensável a legalidade.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É permitido ao Técnico Industrial divulgar informações confidenciais de clientes, desde que mediante pagamento.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O profissional está dispensado de declarar suspeição ou impedimento, cabendo exclusivamente ao Conselho tal verificação.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"Não é dever do Técnico Industrial exercer a profissão com zelo, bastando o cumprimento dos prazos contratuais.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É permitido ao profissional recusar-se a colaborar com a fiscalização do Conselho, alegando sigilo profissional.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A publicidade do Técnico Industrial pode ser feita de forma sensacionalista, desde que verdadeira.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial pode adotar conduta pessoal incompatível com a dignidade profissional fora do horário de trabalho.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A colaboração com a fiscalização do Conselho é uma faculdade, e não um dever, do profissional.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É permitido ao profissional utilizar-se do nome de colega para obter vantagens, desde que com consentimento verbal.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial está dispensado de atualização profissional, uma vez obtido o registro definitivo.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A violação do sigilo profissional constitui mera irregularidade administrativa, sem natureza ética.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"Não é direito do Técnico Industrial exercer a profissão sem discriminação, cabendo essa garantia apenas a cargos de chefia.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O Técnico Industrial está dispensado de prestar contas de sua gestão em qualquer hipótese.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A obsolescência de conhecimentos técnicos justifica o exercício inadequado da profissão.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"O profissional pode desrespeitar o cliente em situações de conflito, desde que de forma reservada.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"É permitido ao Técnico Industrial explorar sua posição hierárquica para fins de promoção pessoal.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A assinatura do Técnico Industrial em obras e serviços não implica qualquer responsabilidade técnica.", o:["Certo","Errado"], c:1, m:"Código de Ética (Res. 206/2022)"},
+    {q:"A Administração Pública direta é composta apenas pela União e pelos Municípios.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"Autarquias, fundações, empresas públicas e sociedades de economia mista integram a Administração Pública direta.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A descentralização administrativa ocorre exclusivamente por delegação, sendo vedada a outorga.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A desconcentração administrativa cria nova pessoa jurídica dentro da Administração.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"Autarquias são pessoas jurídicas de direito privado, criadas por decreto do Chefe do Executivo.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"As fundações públicas são sempre pessoas jurídicas de direito privado, jamais de direito público.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"As empresas públicas podem ter capital misto entre o Estado e particulares, com maioria privada.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"As sociedades de economia mista possuem capital exclusivamente estatal, sendo pessoas jurídicas de direito público.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"O princípio da legalidade autoriza o administrador a agir livremente, salvo proibição expressa em lei.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"O princípio da impessoalidade permite a promoção pessoal de agentes públicos em atos e obras governamentais.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"O princípio da publicidade admite, como regra geral, o sigilo dos atos administrativos.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"O poder hierárquico não permite à Administração rever a atuação de seus agentes subordinados.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"O poder disciplinar é exclusivo da autoridade judiciária, não cabendo à Administração aplicar penalidades a servidores.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"O poder regulamentar permite ao Chefe do Executivo criar obrigações não previstas em lei, por meio de decreto autônomo.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"O poder de polícia depende sempre de autorização judicial prévia para ser exercido.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A presunção de legitimidade do ato administrativo é absoluta, não admitindo prova em contrário.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A imperatividade do ato administrativo depende da concordância prévia do particular destinatário.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A autoexecutoriedade exige, em regra, prévia autorização judicial para toda execução de ato administrativo.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A revogação do ato administrativo ocorre exclusivamente por razões de ilegalidade.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A convalidação é vedada no ordenamento jurídico brasileiro, sendo todo ato viciado necessariamente anulado.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"O excesso de poder é vício de finalidade, e não de competência.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"A Administração não pode anular seus próprios atos ilegais, dependendo sempre de decisão judicial.", o:["Certo","Errado"], c:1, m:"Direito Administrativo"},
+    {q:"O processo administrativo federal rege-se exclusivamente pelo princípio da celeridade, sem menção a legalidade ou motivação.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"Razoabilidade, proporcionalidade e eficiência não são princípios previstos na Lei nº 9.784/1999.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"A Lei nº 9.784/1999 não garante ampla defesa e contraditório, aplicáveis apenas ao processo penal.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"O administrado não tem direito a ser tratado com respeito pelas autoridades, sendo essa uma cortesia facultativa.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"É vedado ao administrado ter ciência da tramitação dos processos em que for interessado.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"O administrado nunca pode se fazer assistir por advogado em processo administrativo.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"O administrado está dispensado de expor os fatos conforme a verdade, podendo omitir informações relevantes.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"O processo administrativo só pode iniciar-se mediante requerimento do interessado, nunca de ofício.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"É permitida à Administração a recusa imotivada de recebimento de documentos dos administrados.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"Apenas pessoas jurídicas podem ser legitimadas como interessadas em processo administrativo.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"Para fins de processo administrativo, são capazes apenas os maiores de vinte e um anos.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"A competência administrativa é livremente renunciável pelo agente público.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"A edição de atos normativos pode ser objeto de delegação irrestrita na Lei nº 9.784/1999.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"A avocação de competência é sempre vedada, ainda que em caráter excepcional.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"O servidor com interesse direto na matéria não está impedido de atuar no processo.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"Os atos do processo administrativo podem ser produzidos oralmente, sem necessidade de registro escrito.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"Os interessados não têm direito a vista dos autos nem a obter cópias de documentos.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"É livre a cobrança de despesas processuais pela Administração, independentemente de previsão legal.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"A Lei nº 9.784/1999 aplica-se exclusivamente ao Poder Executivo, excluindo os demais Poderes mesmo em função administrativa.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"É permitida a aplicação retroativa de nova interpretação da norma administrativa, para prejudicar o administrado.", o:["Certo","Errado"], c:1, m:"Lei nº 9.784/1999"},
+    {q:"A LGPD não protege dados de pessoas naturais, aplicando-se apenas a pessoas jurídicas.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"Dado pessoal sensível não inclui dados sobre saúde ou vida sexual, apenas dados financeiros.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"O controlador é quem realiza o tratamento de dados em nome de terceiro, sem poder de decisão.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"O operador é quem decide sobre as finalidades do tratamento de dados pessoais.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"O encarregado (DPO) tem competência para aplicar sanções administrativas às empresas.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"A ANPD é um órgão do Poder Judiciário responsável por julgar ações sobre dados pessoais.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"O consentimento para tratamento de dados pode ser presumido, dispensando manifestação do titular.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"O titular dos dados não pode revogar o consentimento após concedido.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"Dado anonimizado permite a reidentificação da pessoa natural por meios razoáveis, mantendo sua natureza de dado pessoal comum.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"A LGPD aplica-se apenas a empresas privadas, não alcançando pessoas jurídicas de direito público.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"A Administração Pública nunca pode tratar dados pessoais, mesmo para execução de políticas públicas.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"A LGPD entrou em vigor em janeiro de 2018, imediatamente após sua publicação.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"A violação de dados dispensa qualquer comunicação ao titular ou à ANPD.", o:["Certo","Errado"], c:1, m:"Lei nº 13.709/2018"},
+    {q:"A arquivologia estuda exclusivamente a preservação de documentos históricos, sem relação com gestão de documentos correntes.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"A teoria das três idades não é reconhecida pela arquivologia, sendo um conceito de biblioteconomia.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"Documentos correntes são aqueles sem uso, aguardando eliminação imediata.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"Documentos intermediários possuem valor histórico permanente, não podendo jamais ser eliminados.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"Documentos permanentes podem ser eliminados a critério do órgão, sem necessidade de avaliação.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"O protocolo é o setor responsável exclusivamente pela eliminação de documentos.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"A gestão de documentos abrange apenas documentos físicos, excluindo os digitais.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"O princípio da proveniência permite a mistura de documentos de diferentes fundos arquivísticos.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"A eliminação de documentos pode ocorrer livremente, sem análise, avaliação ou respaldo legal.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"Os arquivos correntes são também conhecidos como arquivos de terceira idade.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"O acesso a documentos de arquivo público é, em regra, sigiloso, sendo a publicidade a exceção.", o:["Certo","Errado"], c:1, m:"Arquivologia"},
+    {q:"A LAI estabelece que o sigilo é a regra geral, sendo a publicidade a exceção.", o:["Certo","Errado"], c:1, m:"Lei 12.527/2011"},
+    {q:"A transparência ativa consiste exclusivamente no atendimento a pedidos formais do cidadão.", o:["Certo","Errado"], c:1, m:"Lei 12.527/2011"},
+    {q:"O prazo para resposta a pedido de informação na LAI é de 60 dias, prorrogáveis por mais 60.", o:["Certo","Errado"], c:1, m:"Lei 12.527/2011"},
+    {q:"A informação classificada como ultrassecreta tem prazo máximo de restrição de 5 anos.", o:["Certo","Errado"], c:1, m:"Lei 12.527/2011"},
+    {q:"Informações pessoais relativas à intimidade e vida privada não possuem qualquer restrição de acesso pela LAI.", o:["Certo","Errado"], c:1, m:"Lei 12.527/2011"},
+    {q:"É permitido à Administração exigir que o pedido de acesso à informação justifique o motivo da solicitação.", o:["Certo","Errado"], c:1, m:"Lei 12.527/2011"},
+    {q:"A Lei de Improbidade Administrativa admite a responsabilização por mera culpa, sem necessidade de dolo, em qualquer hipótese.", o:["Certo","Errado"], c:1, m:"Lei nº 8.429/1992"},
+    {q:"O mero exercício da função pública, isoladamente, já caracteriza ato de improbidade administrativa.", o:["Certo","Errado"], c:1, m:"Lei nº 8.429/1992"},
+    {q:"A divergência interpretativa da lei, mesmo amparada em jurisprudência, sempre configura ato de improbidade.", o:["Certo","Errado"], c:1, m:"Lei nº 8.429/1992"},
+    {q:"O sucessor do agente que causar dano ao erário responde ilimitadamente, além do valor da herança recebida.", o:["Certo","Errado"], c:1, m:"Lei nº 8.429/1992"},
+    {q:"O agente público, para fins da lei, restringe-se a servidores efetivos, excluindo ocupantes de cargos comissionados.", o:["Certo","Errado"], c:1, m:"Lei nº 8.429/1992"},
+    {q:"A abordagem por processos é irrelevante para a eficiência das organizações públicas.", o:["Certo","Errado"], c:1, m:"Gestão de Processos"},
+    {q:"O fluxograma não é considerado uma ferramenta de mapeamento de processos.", o:["Certo","Errado"], c:1, m:"Gestão de Processos"},
+    {q:"A sigla BPM significa \"Business Planning Method\", sem relação com gestão de processos de negócio.", o:["Certo","Errado"], c:1, m:"Gestão de Processos"},
+    {q:"O ciclo PDCA é composto pelas etapas Plan, Do, Control e Adjust.", o:["Certo","Errado"], c:1, m:"Gestão de Processos"},
+    {q:"Indicadores de desempenho não servem para medir eficácia ou eficiência de um processo.", o:["Certo","Errado"], c:1, m:"Gestão de Processos"},
+    {q:"Na gestão de processos, \"entradas\" referem-se exclusivamente aos resultados finais entregues ao cliente.", o:["Certo","Errado"], c:1, m:"Gestão de Processos"},
+    {q:"A gestão de almoxarifado é irrelevante para o controle interno da Administração.", o:["Certo","Errado"], c:1, m:"Adm. de Materiais"},
+    {q:"O controle de estoque deve seguir exclusivamente o método UEPS (Último que Entra, Primeiro que Sai) na Administração Pública.", o:["Certo","Errado"], c:1, m:"Adm. de Materiais"},
+    {q:"A guarda e conservação de equipamentos não são atribuições da administração de materiais.", o:["Certo","Errado"], c:1, m:"Adm. de Materiais"},
+    {q:"O recebimento de mercadorias no almoxarifado dispensa qualquer conferência quantitativa ou qualitativa.", o:["Certo","Errado"], c:1, m:"Adm. de Materiais"},
+    {q:"A alienação de bens imóveis do CRT-SP independe de autorização do Plenário.", o:["Certo","Errado"], c:1, m:"Adm. de Materiais"},
+    {q:"A gestão de pessoas tem como finalidade exclusiva o cumprimento de metas financeiras da organização.", o:["Certo","Errado"], c:1, m:"Gestão de Pessoas"},
+    {q:"O processo de agregar pessoas envolve apenas o desligamento de funcionários.", o:["Certo","Errado"], c:1, m:"Gestão de Pessoas"},
+    {q:"O recrutamento externo atua exclusivamente sobre candidatos já pertencentes ao quadro da organização.", o:["Certo","Errado"], c:1, m:"Gestão de Pessoas"},
+    {q:"Recompensar pessoas refere-se apenas a punições disciplinares aplicadas aos empregados.", o:["Certo","Errado"], c:1, m:"Gestão de Pessoas"},
+    {q:"Monitorar pessoas não envolve o uso de bancos de dados ou sistemas de informações gerenciais.", o:["Certo","Errado"], c:1, m:"Gestão de Pessoas"},
+    {q:"A Lei nº 14.133/2021 aplica-se exclusivamente aos Municípios, excluindo União e Estados.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133/2021 manteve integralmente em vigor a Lei nº 8.666/1993, sem revogá-la.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O Portal Nacional de Contratações Públicas (PNCP) é facultativo, podendo os órgãos optar por não utilizá-lo.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O planejamento prévio é dispensável na Lei 14.133, bastando a publicação do edital.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A inversão de fases é vedada pela Lei 14.133, devendo a habilitação sempre anteceder o julgamento das propostas.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 extinguiu a modalidade de licitação chamada diálogo competitivo.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O diálogo competitivo é voltado exclusivamente para aquisição de bens de pequeno valor.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A transparência na Lei 14.133 é dispensada em contratações de qualquer valor, mediante simples justificativa do gestor.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 enfraqueceu as regras de governança e responsabilização dos gestores públicos.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 permite que a mesma pessoa acumule as funções de fiscal e gestor do contrato, sem restrição.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A nova Lei de Licitações entrou em vigor em janeiro de 2019.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A matriz de riscos é sempre facultativa, independentemente do porte da obra ou serviço de engenharia.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"Em contratações de grande vulto, o contratado está dispensado de implantar programa de integridade.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O reajustamento de preços na Lei 14.133 é vedado em qualquer hipótese contratual.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"Nos contratos de serviços contínuos com dedicação exclusiva de mão de obra, o reajuste ocorre automaticamente, sem repactuação.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O contratado está dispensado de manter as condições de habilitação durante a execução do contrato.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"É permitido ao contratado contratar parente de dirigente do órgão contratante sem qualquer restrição.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O contratado está dispensado de cumprir cotas de reserva de cargos para pessoas com deficiência e reabilitados.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Administração não pode extinguir unilateralmente o contrato, ainda que haja descumprimento das cláusulas contratuais.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A extinção unilateral do contrato dispensa autorização escrita e fundamentada da autoridade competente.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"Na extinção unilateral, é vedado ao contratado o exercício do contraditório e da ampla defesa.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"Na extinção unilateral, a Administração está impedida de assumir imediatamente o objeto do contrato.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A ocupação provisória das instalações do contratado independe de autorização de autoridade competente.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Administração está impedida de executar a garantia contratual para ressarcimento de prejuízos na extinção unilateral.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Administração não pode reter créditos do contratado, ainda que existam prejuízos comprovados.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"Os contratos administrativos não admitem cláusulas exorbitantes em favor da Administração.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A extinção unilateral pode ocorrer mesmo quando o descumprimento decorre de conduta da própria Administração.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"Os emitentes de garantia contratual não precisam ser notificados sobre o processo de descumprimento contratual.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"Em vez de contratar terceiro, a Administração é sempre obrigada a executar diretamente o objeto na extinção contratual.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O objeto do contrato e seus elementos característicos não são considerados cláusulas essenciais pela Lei 14.133/2021.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"}
+  ];
+
+  var st = {
+    scene: "menu",
+    modeIdx: 0,
+    rangeIdx: 0,
+    helpVisible: false,
+
+    score: 0,
+    correctCount: 0,
+    totalCount: 0,
+    streak: 0,
+    bestStreak: 0,
+    bestQuizStreak: 0,
+    timeLeft: 60,
+    timerHandle: null,
+
+    cursor: 0,
+    options: [],
+    correctIdx: 0,
+    eliminated: [],
+    locked: false,
+    paused: false,
+    exitPending: false,
+
+    currentLevel: 1,
+    fuseBurning: true,
+    bombExploded: false,
+
+    // Banco de questões Quiz CRT SP (usa o banco embutido)
+    quizQuestions: EMBEDDED_QUESTIONS,
+    quizIndex: 0,
+    shuffledQuizQuestions: [],
+    currentQuizQuestion: null,
+    questionsLoaded: true,
+
+    // Modo Quiz: vidas e ranking
+    lives: 3,
+    playerInitials: "",
+    initialsSlots: [0,0,0],
+    initialsCursor: 0,
+    rankingTop3: []
+  };
+
+  var audioCtx = null;
+  function initAudio() {
+    if (!audioCtx) {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch(e) {}
+    }
+  }
+
+  function playSound(frequency, duration, type, volume) {
+    try {
+      initAudio();
+      if (!audioCtx) return;
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = type || 'square';
+      osc.frequency.value = frequency;
+      gain.gain.setValueAtTime(volume || 0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  function playCorrect() {
+    playSound(587, 0.08, 'square', 0.1);
+    setTimeout(function() { playSound(880, 0.12, 'square', 0.1); }, 80);
+  }
+
+  function playWrong() {
+    playSound(220, 0.25, 'sawtooth', 0.12);
+    setTimeout(function() { playSound(147, 0.3, 'sawtooth', 0.12); }, 120);
+  }
+
+  function playExplosion() {
+    playSound(100, 0.8, 'triangle', 0.25);
+    playSound(60, 1.2, 'sawtooth', 0.2);
+  }
+
+  function playLevelUp() {
+    playSound(440, 0.1, 'square', 0.1);
+    setTimeout(function() { playSound(554, 0.1, 'square', 0.1); }, 100);
+    setTimeout(function() { playSound(659, 0.1, 'square', 0.1); }, 200);
+    setTimeout(function() { playSound(880, 0.2, 'square', 0.1); }, 300);
+  }
+
+  function $(id){ return document.getElementById(id); }
+
+  function showView(id){
+    document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+    $(id).classList.add("active");
+  }
+
+  function loadRecords() {
+    try {
+      var savedTab = localStorage.getItem('tabBoyBestStreak');
+      var savedQuiz = localStorage.getItem('tabBoyBestQuizStreak');
+      var savedInitials = localStorage.getItem('tabBoyInitials');
+      if (savedTab) st.bestStreak = parseInt(savedTab) || 0;
+      if (savedQuiz) st.bestQuizStreak = parseInt(savedQuiz) || 0;
+      if (savedInitials && savedInitials.length === 3) st.playerInitials = savedInitials;
+    } catch(e) {}
+  }
+
+  function heartsString(lives){
+    var s = "";
+    for (var i = 0; i < 3; i++) s += (i < lives ? "♥" : "♡");
+    return s;
+  }
+
+  // ---- Ranking (Firebase) ----
+  function subscribeRanking(){
+    if (!rankingRef) { renderRankingBox(); return; }
+    try {
+      rankingRef.on('value', function(snap){
+        var data = snap.val() || {};
+        var arr = Object.keys(data).map(function(k){ return data[k]; });
+        arr.sort(function(a,b){ return (b.score||0) - (a.score||0); });
+        st.rankingTop3 = arr.slice(0,3);
+        renderRankingBox();
+      }, function(err){
+        console.warn("Ranking indisponível:", err);
+        renderRankingBox();
+      });
+    } catch(e) {}
+  }
+
+  function renderRankingBox(){
+    var box = $("rankingList");
+    if (!box) return;
+    var list = st.rankingTop3 || [];
+    if (list.length === 0) {
+      box.textContent = "Seja o 1º a pontuar!";
+      return;
+    }
+    var medals = ["1º","2º","3º"];
+    var html = "";
+    list.forEach(function(e, i){
+      html += "<div class='ranking-row'><span>" + medals[i] + " " + (e.initials || "???") + "</span><span>" + (e.score || 0) + " pts</span></div>";
+    });
+    box.innerHTML = html;
+  }
+
+  function submitScoreToRanking(initials, score){
+    if (!rankingRef) return;
+    try {
+      rankingRef.once('value').then(function(snap){
+        var data = snap.val() || {};
+        var arr = Object.keys(data).map(function(k){ return data[k]; });
+        arr.push({ initials: initials, score: score, ts: Date.now() });
+        arr.sort(function(a,b){ return (b.score - a.score) || (a.ts - b.ts); });
+        var top3 = arr.slice(0,3);
+        var newData = {};
+        top3.forEach(function(e,i){ newData["p"+i] = { initials: e.initials, score: e.score, ts: e.ts }; });
+        return rankingRef.set(newData);
+      }).catch(function(err){ console.warn("Falha ao salvar ranking:", err); });
+    } catch(e) {}
+  }
+
+  // ---- Tela de iniciais (entrada do nome pro ranking) ----
+  function renderInitials(){
+    for (var i = 0; i < 3; i++) {
+      var el = $("initSlot" + i);
+      el.textContent = ALPHABET[st.initialsSlots[i]];
+      el.classList.toggle("active", i === st.initialsCursor);
+    }
+  }
+
+  function openInitialsScreen(){
+    var stored = st.playerInitials || "AAA";
+    for (var i = 0; i < 3; i++) {
+      var idx = ALPHABET.indexOf(stored[i] || "A");
+      st.initialsSlots[i] = idx >= 0 ? idx : 0;
+    }
+    st.initialsCursor = 0;
+    st.scene = "initials";
+    showView("view-initials");
+    renderInitials();
+    $("statModeName").textContent = "JOGADOR";
+    $("statRight").textContent = "";
+    $("labelA").textContent = "Ok";
+    $("labelB").textContent = "Voltar";
+  }
+
+  function initialsMove(dir){
+    if (dir === "left" || dir === "right") {
+      st.initialsCursor = (st.initialsCursor + (dir === "right" ? 1 : -1) + 3) % 3;
+    } else if (dir === "up" || dir === "down") {
+      var d = dir === "up" ? -1 : 1;
+      st.initialsSlots[st.initialsCursor] = (st.initialsSlots[st.initialsCursor] + d + ALPHABET.length) % ALPHABET.length;
+    }
+    renderInitials();
+  }
+
+  function confirmInitials(){
+    var name = st.initialsSlots.map(function(i){ return ALPHABET[i]; }).join("");
+    st.playerInitials = name;
+    try { localStorage.setItem('tabBoyInitials', name); } catch(e) {}
+    startGame();
+  }
+
+  function saveRecords() {
+    try {
+      if (st.streak > st.bestStreak && modeKey() !== "quiz") {
+        st.bestStreak = st.streak;
+        localStorage.setItem('tabBoyBestStreak', String(st.bestStreak));
+      } else if (st.streak > st.bestQuizStreak && modeKey() === "quiz") {
+        st.bestQuizStreak = st.streak;
+        localStorage.setItem('tabBoyBestQuizStreak', String(st.bestQuizStreak));
+      }
+    } catch(e) {}
+  }
+
+  function shuffleArray(array) {
+    var arr = array.slice();
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
+    }
+    return arr;
+  }
+
+  function renderMenu(){
+    var mWrap = $("modeOptions");
+    mWrap.innerHTML = "";
+    MODES.forEach(function(m,i){
+      var d = document.createElement("div");
+      d.className = "menu-opt" + (i===st.modeIdx ? " on" : "");
+      d.textContent = m.label;
+      mWrap.appendChild(d);
+    });
+
+    var rWrap = $("rangeOptions");
+    rWrap.innerHTML = "";
+    RANGES.forEach(function(r,i){
+      var d = document.createElement("div");
+      d.className = "menu-opt" + (i===st.rangeIdx ? " on" : "");
+      d.textContent = "1 a " + r;
+      rWrap.appendChild(d);
+    });
+
+    if (modeKey() === "quiz") {
+      $("rangeContainer").style.display = "none";
+      var totalQ = st.quizQuestions.length;
+      $("menuRecord").innerHTML = "Melhor sequência Quiz: <span>" + st.bestQuizStreak + "</span> (total: " + totalQ + " perguntas)";
+      $("rankingBox").style.display = "block";
+      renderRankingBox();
+    } else {
+      $("rangeContainer").style.display = "block";
+      $("menuRecord").innerHTML = "Melhor sequência: <span>" + st.bestStreak + "</span>";
+      $("rankingBox").style.display = "none";
+    }
+
+    $("statModeName").textContent = "MENU";
+    $("statRight").textContent = "";
+    $("labelA").textContent = "Ok";
+    $("labelB").textContent = "Ajuda";
+  }
+
+  function modeKey(){ return MODES[st.modeIdx].key; }
+
+  function startGame(){
+    st.score = 0; st.correctCount = 0; st.totalCount = 0;
+    st.streak = 0; st.timeLeft = 60; st.currentLevel = 1;
+    st.scene = "play"; st.paused = false; st.exitPending = false;
+    st.fuseBurning = true; st.bombExploded = false;
+    st.lives = 3;
+
+    // Para o modo quiz, embaralha as perguntas e reseta o índice
+    if (modeKey() === "quiz" && st.quizQuestions.length > 0) {
+      st.shuffledQuizQuestions = shuffleArray(st.quizQuestions);
+      st.quizIndex = 0;
+    }
+
+    $("pauseOverlay").classList.add("hidden");
+    $("exitOverlay").classList.add("hidden");
+    showView("view-play");
+
+    if (modeKey() === "bomba") {
+      $("bombArea").style.display = "flex";
+      startBombTimer();
+    } else {
+      $("bombArea").style.display = "none";
+    }
+
+    updateStatusBar();
+    nextQuestion();
+    playSound(440, 0.05, 'square', 0.05);
+  }
+
+  function startBombTimer() {
+    clearInterval(st.timerHandle);
+    st.timerHandle = setInterval(function(){
+      if (st.paused || !st.fuseBurning) return;
+      st.timeLeft--;
+      if (st.timeLeft <= 0) {
+        st.timeLeft = 0;
+        st.bombExploded = true;
+        clearInterval(st.timerHandle);
+        drawBomb();
+        playExplosion();
+        setTimeout(function() { endGame(true); }, 800);
+      }
+      updateStatusBar();
+      drawBomb();
+    }, 1000);
+  }
+
+  function updateStatusBar(){
+    var mode = MODES[st.modeIdx];
+    $("statModeName").textContent = mode.label.toUpperCase();
+    var right = "PTS " + st.score;
+    if (modeKey() === "bomba") {
+      right = st.timeLeft + "s · NÍVEL " + st.currentLevel;
+    }
+    $("statRight").textContent = right;
+  }
+
+  function getHappyFace() {
+    return "☺";
+  }
+
+  function getSadFace() {
+    return "☹";
+  }
+
+  // Pisca 1x em caso de acerto, 2x em caso de erro, depois some e chama onDone.
+  function flashFeedback(isCorrect, onDone){
+    var fb = $("feedbackPixel");
+    var fbText = $("feedbackText");
+    var fbEmoji = $("feedbackEmoji");
+
+    fbText.textContent = isCorrect ? "ACERTOU!" : "ERROU!";
+    fbEmoji.textContent = isCorrect ? getHappyFace() : getSadFace();
+    fb.classList.toggle("fb-correct", isCorrect);
+    fb.classList.toggle("fb-wrong", !isCorrect);
+    fb.classList.remove("show");
+
+    clearTimeout(fb._t1); clearTimeout(fb._t2);
+
+    var blinks = isCorrect ? 1 : 2;
+    var ON_MS = 190, OFF_MS = 140, HOLD_MS = 280;
+    var count = 0;
+
+    function showPulse(){
+      fb.classList.add("show");
+      count++;
+      if (count < blinks) {
+        fb._t1 = setTimeout(hidePulse, ON_MS);
+      } else {
+        fb._t2 = setTimeout(function(){
+          fb.classList.remove("show");
+          if (onDone) onDone();
+        }, ON_MS + HOLD_MS);
+      }
+    }
+    function hidePulse(){
+      fb.classList.remove("show");
+      fb._t1 = setTimeout(showPulse, OFF_MS);
+    }
+    showPulse();
+  }
+
+  function drawBomb() {
+    var canvas = $("bombCanvas");
+    if (!canvas) return;
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    canvas.width = 160;
+    canvas.height = 40;
+
+    var dark = "#0f380f";
+    var light = "#9bbc0f";
+
+    if (st.bombExploded) {
+      ctx.fillStyle = dark;
+      ctx.beginPath();
+      ctx.arc(80, 20, 18, 0, Math.PI*2);
+      ctx.fill();
+      ctx.font = "800 12px monospace";
+      ctx.fillStyle = light;
+      ctx.fillText("BOOM!", 62, 24);
+      return;
+    }
+
+    ctx.fillStyle = dark;
+    ctx.beginPath();
+    ctx.arc(30, 24, 12, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.fillRect(27, 9, 6, 4);
+
+    ctx.font = "700 10px monospace";
+    ctx.fillText("LVL " + st.currentLevel, 12, 27);
+
+    ctx.strokeStyle = dark;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(30, 9);
+    ctx.quadraticCurveTo(50, -5, 120, 15);
+    ctx.stroke();
+
+    var timeRatio = Math.max(0, Math.min(1, st.timeLeft / 60));
+    var fuseLength = 90 * timeRatio;
+    var sparkX = 30 + (fuseLength);
+    var sparkY = 9 + (0.1 * fuseLength);
+
+    if (st.fuseBurning && st.timeLeft > 0) {
+      ctx.fillStyle = dark;
+      ctx.fillRect(sparkX - 2, sparkY - 2, 4, 4);
+      var r = Math.random() > 0.5 ? 4 : 2;
+      ctx.fillRect(sparkX - r, sparkY - r, 1, 1);
+      ctx.fillRect(sparkX + r, sparkY + r, 1, 1);
+    }
+  }
+
+  function nextQuestion(){
+    if (modeKey() === "quiz") {
+      if (st.quizQuestions.length === 0) {
+        $("questionText").textContent = "Nenhuma pergunta disponível";
+        st.options = ["---", "---"];
+        st.correctIdx = 0;
+        st.cursor = 0;
+        st.locked = false;
+        $("optionsGrid").className = "options-grid quiz-mode";
+        renderOptions();
+        return;
+      }
+
+      if (!st.shuffledQuizQuestions || st.shuffledQuizQuestions.length === 0) {
+        st.shuffledQuizQuestions = shuffleArray(st.quizQuestions);
+        st.quizIndex = 0;
+      }
+
+      var q = st.shuffledQuizQuestions[st.quizIndex % st.shuffledQuizQuestions.length];
+      st.quizIndex++;
+
+      if (st.quizIndex >= st.shuffledQuizQuestions.length) {
+        st.shuffledQuizQuestions = shuffleArray(st.quizQuestions);
+        st.quizIndex = 0;
+        q = st.shuffledQuizQuestions[0];
+        st.quizIndex = 1;
+      }
+
+      st.currentQuizQuestion = q;
+      st.options = q.o;
+      st.correctIdx = q.c;
+      st.cursor = 0;
+      st.locked = false;
+
+      $("questionText").textContent = q.q;
+      $("playFooter").innerHTML = "<span class='footer-hearts'>" + heartsString(st.lives) + "</span> &middot; Matéria: <span>" + q.m + "</span>";
+      $("optionsGrid").className = "options-grid quiz-mode";
+      renderOptions();
+      return;
+    }
+
+    // Modo Treino ou Bomba
+    var max = RANGES[st.rangeIdx];
+    var a = 1 + Math.floor(Math.random()*max);
+    var b = 1 + Math.floor(Math.random()*max);
+    var correct = a*b;
+
+    var opts = [correct];
+    while(opts.length < 4){
+      var delta = [ -a, a, -b, b, -1, 1, -2, 2 ][Math.floor(Math.random()*8)];
+      var candidate = correct + delta * (1 + Math.floor(Math.random()*2));
+      if(candidate <= 0) candidate = correct + Math.floor(Math.random()*5) + 1;
+      if(opts.indexOf(candidate) === -1) opts.push(candidate);
+    }
+    opts.sort(function() { return 0.5 - Math.random(); });
+
+    st.correctIdx = opts.indexOf(correct);
+    st.options = opts;
+    st.eliminated = [];
+    st.cursor = 0;
+    st.locked = false;
+
+    $("questionText").textContent = a + " x " + b;
+    $("optionsGrid").className = "options-grid";
+    renderOptions();
+  }
+
+  function renderOptions(){
+    var grid = $("optionsGrid");
+    grid.innerHTML = "";
+    st.options.forEach(function(val, i){
+      var cell = document.createElement("div");
+      cell.className = "opt-cell" + (i===st.cursor ? " cursor" : "");
+      cell.textContent = val;
+      grid.appendChild(cell);
+    });
+  }
+
+  function moveCursor(dir){
+    if(st.locked || st.paused || st.scene!=="play" || st.exitPending) return;
+    var total = st.options.length;
+    if (dir === "left" || dir === "right") {
+      st.cursor = (st.cursor + (dir === "right" ? 1 : -1) + total) % total;
+    } else if (dir === "up") {
+      st.cursor = (st.cursor - 2 + total) % total;
+    } else if (dir === "down") {
+      st.cursor = (st.cursor + 2) % total;
+    }
+    renderOptions();
+  }
+
+  function confirmAnswer(){
+    if(st.scene !== "play" || st.locked || st.paused || st.exitPending) return;
+    st.locked = true;
+    st.totalCount++;
+    var correct = st.cursor === st.correctIdx;
+    var isQuiz = modeKey() === "quiz";
+    var skipAdvance = false; // true quando bomba explode/vitória/game over já cuidam do próximo passo
+
+    if(correct){
+      st.correctCount++;
+      st.streak++;
+      playCorrect();
+
+      if (isQuiz) {
+        st.score += 1;
+      } else {
+        st.score += 10;
+      }
+
+      if (modeKey() === "bomba") {
+        st.fuseBurning = false;
+        var rules = BOMB_LEVELS[st.currentLevel - 1];
+        st.timeLeft += rules[1];
+        if (st.timeLeft > 60) st.timeLeft = 60;
+        drawBomb();
+
+        if (st.streak % 5 === 0 && st.currentLevel < 10) {
+          st.currentLevel++;
+          playLevelUp();
+        } else if (st.streak >= 50 && st.currentLevel === 10) {
+          clearInterval(st.timerHandle);
+          skipAdvance = true;
+          setTimeout(function() { victory(); }, 800);
+        }
+      }
+    } else {
+      st.streak = 0;
+      playWrong();
+
+      if (isQuiz) {
+        st.score = Math.max(0, st.score - 1);
+        st.lives = Math.max(0, st.lives - 1);
+        if (st.lives <= 0) skipAdvance = true;
+      }
+
+      if (modeKey() === "bomba") {
+        st.fuseBurning = true;
+        var rulesW = BOMB_LEVELS[st.currentLevel - 1];
+        st.timeLeft -= rulesW[0];
+        if (st.timeLeft <= 0) {
+          st.timeLeft = 0;
+          st.bombExploded = true;
+          clearInterval(st.timerHandle);
+          drawBomb();
+          playExplosion();
+          skipAdvance = true;
+          setTimeout(function() { endGame(true); }, 800);
+        } else {
+          drawBomb();
+        }
+      }
+    }
+
+    saveRecords();
+    updateStatusBar();
+
+    if (isQuiz) {
+      $("playFooter").innerHTML = "<span class='footer-hearts'>" + heartsString(st.lives) + "</span> &middot; Matéria: <span>" + (st.currentQuizQuestion ? st.currentQuizQuestion.m : "") + "</span>";
+    } else {
+      $("streakDisplay").textContent = st.streak;
+      $("levelDisplay").textContent = st.currentLevel;
+    }
+
+    flashFeedback(correct, function(){
+      if (skipAdvance) {
+        if (isQuiz && st.lives <= 0) {
+          quizGameOver();
+        }
+        return;
+      }
+      if (modeKey() === "bomba") st.fuseBurning = true;
+      nextQuestion();
+    });
+  }
+
+  function quizGameOver(){
+    st.scene = "over";
+    showView("view-over");
+    $("overTitle").textContent = "GAME OVER";
+    $("overScore").textContent = "Pontos: " + st.score;
+    $("overDetail").textContent = "Acertos: " + st.correctCount + " de " + st.totalCount;
+    $("overRecordText").innerHTML = "Melhor sequência Quiz: <span>" + st.bestQuizStreak + "</span>";
+    var extra = $("overExtra");
+    if (extra) extra.textContent = "Jogador " + (st.playerInitials || "???") + " · pontuação enviada ao ranking!";
+    submitScoreToRanking(st.playerInitials || "???", st.score);
+    playSound(220, 0.25, 'sawtooth', 0.12);
+    setTimeout(function() { playSound(140, 0.3, 'sawtooth', 0.12); }, 150);
+  }
+
+  function victory() {
+    st.scene = "over";
+    showView("view-over");
+    $("overTitle").textContent = "BOMBA DESARMADA!";
+    $("overScore").textContent = "Pontos: " + st.score;
+    $("overDetail").textContent = "Parabéns! Você atingiu o nível 10 e salvou o dia!";
+    if ($("overExtra")) $("overExtra").textContent = "";
+    playSound(523, 0.15, 'square', 0.1);
+    setTimeout(function() { playSound(659, 0.15, 'square', 0.1); }, 150);
+    setTimeout(function() { playSound(784, 0.3, 'square', 0.1); }, 300);
+  }
+
+  function endGame(isTimeOver){
+    clearInterval(st.timerHandle);
+    st.scene = "over";
+    showView("view-over");
+    $("overTitle").textContent = isTimeOver ? "TEMPO ESGOTADO!" : "FIM DE JOGO";
+    $("overScore").textContent = "Pontos: " + st.score;
+    $("overDetail").textContent = "Acertos: " + st.correctCount + " de " + st.totalCount;
+    if ($("overExtra")) $("overExtra").textContent = "";
+
+    if (modeKey() === "quiz") {
+      $("overRecordText").innerHTML = "Melhor sequência Quiz: <span>" + st.bestQuizStreak + "</span>";
+    } else {
+      $("overRecordText").innerHTML = "Melhor sequência: <span>" + st.bestStreak + "</span>";
+    }
+  }
+
+  function dpadAction(dir){
+    if(st.scene === "menu"){
+      playMenuSound();
+      if(dir === "up" || dir === "down"){
+        st.modeIdx = (st.modeIdx + (dir==="down"?1:-1) + MODES.length) % MODES.length;
+      } else {
+        if (modeKey() !== "quiz") {
+          st.rangeIdx = (st.rangeIdx + (dir==="right"?1:-1) + RANGES.length) % RANGES.length;
+        }
+      }
+      renderMenu();
+    } else if(st.scene === "play"){
+      moveCursor(dir);
+    } else if(st.scene === "initials"){
+      initialsMove(dir);
+      playMenuSound();
+    }
+  }
+
+  function playMenuSound() {
+    playSound(440, 0.05, 'square', 0.05);
+  }
+
+  function btnA(){
+    if(st.scene === "menu"){
+      if (modeKey() === "quiz") {
+        openInitialsScreen();
+      } else {
+        startGame();
+      }
+    } else if(st.scene === "initials"){
+      confirmInitials();
+    } else if(st.scene === "play"){
+      if(st.exitPending){
+        st.exitPending = false;
+        $("exitOverlay").classList.add("hidden");
+        clearInterval(st.timerHandle);
+        st.scene = "menu";
+        showView("view-menu");
+        renderMenu();
+      } else if(st.paused){
+        st.paused = false;
+        $("pauseOverlay").classList.add("hidden");
+      } else {
+        confirmAnswer();
+      }
+    } else if(st.scene === "over"){
+      startGame();
+    }
+  }
+
+  function btnB(){
+    if(st.scene === "menu"){
+      st.helpVisible = !st.helpVisible;
+      $("helpBox").style.display = st.helpVisible ? "block" : "none";
+      playMenuSound();
+    } else if(st.scene === "initials"){
+      st.scene = "menu";
+      showView("view-menu");
+      renderMenu();
+      playMenuSound();
+    } else if(st.scene === "play"){
+      if(st.exitPending){
+        st.exitPending = false;
+        $("exitOverlay").classList.add("hidden");
+      } else if(st.paused){
+        st.paused = false;
+        $("pauseOverlay").classList.add("hidden");
+        nextQuestion();
+      } else {
+        nextQuestion();
+      }
+    }
+  }
+
+  function btnSelect(){
+    if(st.scene === "menu"){
+      st.modeIdx = (st.modeIdx + 1) % MODES.length;
+      renderMenu();
+      playMenuSound();
+    } else if(st.scene === "play"){
+      st.exitPending = true;
+      $("exitOverlay").classList.remove("hidden");
+      playMenuSound();
+    }
+  }
+
+  function btnStart(){
+    if(st.scene === "play"){
+      if(st.paused){
+        st.paused = false;
+        $("pauseOverlay").classList.add("hidden");
+      } else {
+        st.paused = true;
+        $("pauseOverlay").classList.remove("hidden");
+      }
+      playMenuSound();
+    } else if(st.scene === "over"){
+      st.scene = "menu";
+      showView("view-menu");
+      renderMenu();
+    }
+  }
+
+  $("btnUp").addEventListener("click", function(){ dpadAction("up"); });
+  $("btnDown").addEventListener("click", function(){ dpadAction("down"); });
+  $("btnLeft").addEventListener("click", function(){ dpadAction("left"); });
+  $("btnRight").addEventListener("click", function(){ dpadAction("right"); });
+
+  $("btnA").addEventListener("click", btnA);
+  $("btnB").addEventListener("click", btnB);
+  $("btnSelect").addEventListener("click", btnSelect);
+  $("btnStart").addEventListener("click", btnStart);
+
+  document.addEventListener("keydown", function(e){
+    if (e.key === "ArrowUp") dpadAction("up");
+    else if (e.key === "ArrowDown") dpadAction("down");
+    else if (e.key === "ArrowLeft") dpadAction("left");
+    else if (e.key === "ArrowRight") dpadAction("right");
+    else if (e.key.toLowerCase() === "z") btnA();
+    else if (e.key.toLowerCase() === "x") btnB();
+    else if (e.key === "Shift") btnSelect();
+    else if (e.key === "Enter") btnStart();
+  });
+
+  loadRecords();
+  renderMenu();
+  subscribeRanking();
+
+})();
+</script>
+</body>
+</html>
