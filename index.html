@@ -14,6 +14,7 @@
     --bezel:#4f5a3f;
     --lcd:#9bbc0f;
     --lcd-mid:#8bac0f;
+    --lcd-dark2:#306230;
     --lcd-ink:#0f380f;
     --btn-grey:#787569;
     --btn-grey-dark:#5c594f;
@@ -85,7 +86,8 @@
     margin-bottom:6px; text-transform:uppercase;
     flex-shrink:0;
   }
-  .status-bar .hearts{letter-spacing:2px;}
+  .status-bar .hearts{letter-spacing:2px; font-size:12px;}
+  .stat-right-group{display:flex; align-items:center; gap:8px;}
 
   .lcd-body{
     flex:1; 
@@ -340,10 +342,16 @@
   }
   .initial-slot.active{background:var(--lcd-ink); color:var(--lcd); border-color:var(--lcd-ink);}
 
-  /* --- ranking no menu --- */
-  .ranking-box{display:none; text-align:center; font-size:9px; margin:2px 0 8px; line-height:1.6;}
-  .ranking-box .ranking-title{text-transform:uppercase; letter-spacing:.08em; opacity:.7; margin-bottom:2px; font-size:9px;}
-  .ranking-row{display:flex; justify-content:space-between; padding:0 26px; font-weight:700; font-size:10px;}
+  /* --- ranking no menu (pódio) --- */
+  .ranking-box{
+    display:flex; flex-direction:column;
+    text-align:center; margin:2px 0 0;
+    flex:1; min-height:0;
+  }
+  .ranking-box .ranking-title{text-transform:uppercase; letter-spacing:.08em; opacity:.7; margin-bottom:2px; font-size:9px; flex-shrink:0;}
+  #rankingList{flex:1; min-height:0; display:flex; align-items:center; justify-content:center;}
+  .podium-svg{width:100%; height:100%; max-width:260px; display:block; margin:0 auto; image-rendering:pixelated; shape-rendering:crispEdges;}
+  .ranking-empty{font-size:10px; opacity:.8; padding:10px 0;}
   .footer-hearts{letter-spacing:3px; font-size:11px;}
 
   /* Quiz footer */
@@ -370,7 +378,10 @@
     <div class="lcd">
       <div class="status-bar">
         <span id="statModeName">MENU</span>
-        <span id="statRight"></span>
+        <span class="stat-right-group">
+          <span id="statHearts" class="hearts"></span>
+          <span id="statRight"></span>
+        </span>
       </div>
 
       <div class="lcd-body">
@@ -394,7 +405,7 @@
           </div>
 
           <div class="ranking-box" id="rankingBox">
-            <div class="ranking-title">&#127942; Ranking Quiz</div>
+            <div class="ranking-title">Ranking Quiz</div>
             <div id="rankingList">Carregando&hellip;</div>
           </div>
 
@@ -1053,7 +1064,229 @@
     {q:"A extinção unilateral pode ocorrer mesmo quando o descumprimento decorre de conduta da própria Administração.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
     {q:"Os emitentes de garantia contratual não precisam ser notificados sobre o processo de descumprimento contratual.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
     {q:"Em vez de contratar terceiro, a Administração é sempre obrigada a executar diretamente o objeto na extinção contratual.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
-    {q:"O objeto do contrato e seus elementos característicos não são considerados cláusulas essenciais pela Lei 14.133/2021.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"}
+    {q:"O objeto do contrato e seus elementos característicos não são considerados cláusulas essenciais pela Lei 14.133/2021.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+
+    // Lei 14.133/2021 - Modalidades, agentes e contratação direta (novo lote)
+    {q:"Lei nº 14.133/2021 instituiu o pregão, a concorrência, o concurso, o leilão e o diálogo competitivo como modalidades de licitação.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O pregão é utilizado para a contratação de bens e serviços comuns, adotando-se o critério de menor preço ou maior desconto.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A concorrência é utilizada para contratações de bens e serviços especiais e de obras e serviços de engenharia.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O concurso é a modalidade destinada à escolha de trabalho técnico, científico ou artístico, mediante instituição de prêmios ou remuneração aos vencedores.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O leilão é utilizado para a venda de bens móveis inservíveis ou de produtos legalmente apreendidos.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O diálogo competitivo é reservado a contratações de grande complexidade, quando a Administração não dispõe de solução previamente definida.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Os critérios de julgamento da Lei 14.133 incluem menor preço, maior desconto, melhor técnica, técnica e preço e maior retorno econômico.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O agente de contratação é o responsável por conduzir o processo licitatório, podendo ser auxiliado por equipe de apoio.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Em licitações mais complexas, a condução do certame pode ficar a cargo de uma comissão de contratação.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O Sistema de Registro de Preços permite que a Administração registre preços para contratações futuras e eventuais.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A dispensa de licitação e a inexigibilidade são formas de contratação direta admitidas pela Lei 14.133/2021.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"A inexigibilidade de licitação se caracteriza pela inviabilidade de competição entre fornecedores.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O Procedimento de Manifestação de Interesse permite à iniciativa privada apresentar estudos e projetos que podem subsidiar futuras licitações.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O credenciamento é procedimento auxiliar que viabiliza a contratação simultânea de fornecedores em condições padronizadas.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"Os contratos de serviços contínuos podem ter vigência de até dez anos, quando comprovadamente vantajoso para a Administração.", o:["Certo","Errado"], c:0, m:"Lei 14.133/2021"},
+    {q:"O pregão é a modalidade obrigatória para a contratação de obras e serviços de engenharia complexos.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A concorrência é vedada para a contratação de obras e serviços de engenharia.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O concurso é a modalidade utilizada para aquisição rotineira de material de escritório.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O leilão é a modalidade adequada para a contratação de serviços técnicos especializados.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O diálogo competitivo pode ser utilizado em qualquer licitação, mesmo quando o objeto é simples e padronizado.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133/2021 previu apenas dois critérios de julgamento possíveis: menor preço e maior lance.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O agente de contratação deve ser obrigatoriamente um profissional terceirizado, sem qualquer vínculo com a Administração.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A comissão de contratação é exigida em todas as licitações realizadas na modalidade pregão.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O Sistema de Registro de Preços foi extinto pela Lei 14.133/2021.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A dispensa de licitação e a inexigibilidade deixaram de existir com a edição da Lei 14.133/2021.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A inexigibilidade de licitação ocorre quando há ampla concorrência entre diversos fornecedores.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O Procedimento de Manifestação de Interesse obriga a Administração a contratar automaticamente quem apresentou o estudo.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O credenciamento constitui uma modalidade de licitação autônoma, distinta das previstas na Lei 14.133.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"As sanções administrativas da Lei 14.133 se restringem exclusivamente à aplicação de multa.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"Os contratos de serviços contínuos jamais podem ultrapassar doze meses de vigência, mesmo mediante prorrogação.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"É vedada, em qualquer hipótese, a inversão das fases de habilitação e julgamento na Lei 14.133.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A impugnação ao edital de licitação não é admitida pela Lei 14.133/2021.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"Os recursos administrativos contra atos da licitação foram abolidos pela Lei 14.133/2021.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A garantia contratual é vedada pela Lei 14.133/2021 em qualquer tipo de contratação.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A contratação direta por dispensa de licitação exige, obrigatoriamente, prévia autorização do Tribunal de Contas.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 proíbe a exigência de garantia de proposta nas licitações.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O orçamento estimado da contratação deve permanecer sempre em sigilo absoluto, mesmo após a adjudicação.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A fase de habilitação analisa exclusivamente a proposta de preço apresentada pelo licitante.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 veda a utilização de qualquer critério de sustentabilidade ambiental nas licitações.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O julgamento por maior retorno econômico é aplicável exclusivamente aos contratos de obras públicas.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Administração está proibida de exigir amostras ou provas de conceito dos licitantes.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A adjudicação do objeto ao vencedor extingue automaticamente o dever de assinatura do contrato.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O contrato administrativo pode ser alterado unilateralmente pelo contratado sempre que este entender conveniente.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"É permitido ao licitante desistir da proposta a qualquer momento, sem qualquer consequência, mesmo após a habilitação.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 não prevê nenhum prazo mínimo entre a publicação do edital e a data de abertura da sessão pública.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O edital de licitação pode ser alterado a qualquer momento pela Administração, sem necessidade de nova divulgação.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"As microempresas e empresas de pequeno porte perderam todo tratamento diferenciado com a Lei 14.133/2021.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A Lei 14.133 veda a exigência de qualificação técnica dos licitantes em qualquer hipótese.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"O contrato administrativo pode ser rescindido pelo contratado sem qualquer motivação ou aviso prévio.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+    {q:"A publicidade dos atos licitatórios é dispensada sempre que o gestor considerar baixo o valor da contratação.", o:["Certo","Errado"], c:1, m:"Lei 14.133/2021"},
+
+    // Lógica Proposicional
+    {q:"Se P então Q equivale a se ~Q então ~P (contrapositiva).", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"A negação de \"P e Q\" é \"~P ou ~Q\" (lei de De Morgan).", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"A negação de \"P ou Q\" é \"~P e ~Q\" (lei de De Morgan).", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"A negação de \"se P então Q\" é \"P e ~Q\".", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"\"P ou Q\" é falsa somente quando P e Q são ambas falsas.", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"\"P e Q\" é verdadeira somente quando P e Q são ambas verdadeiras.", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"A recíproca de \"se P então Q\" é \"se Q então P\".", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"\"Se P então Q\" é falsa apenas quando P é verdadeira e Q é falsa.", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"A negação de \"algum A é B\" é \"nenhum A é B\".", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"\"P se e somente se Q\" é verdadeira quando P e Q têm o mesmo valor lógico.", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"A bicondicional \"P se e somente se Q\" equivale a \"(P→Q) e (Q→P)\".", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"A contrapositiva de \"se chove, a rua molha\" é \"se a rua não molha, não chove\".", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"Uma contradição é uma proposição composta que é sempre falsa.", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"O conectivo \"e\" (conjunção) é comutativo.", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"Duas proposições são equivalentes quando possuem tabelas-verdade idênticas.", o:["Certo","Errado"], c:0, m:"Lógica Proposicional"},
+    {q:"A recíproca de uma proposição condicional é logicamente equivalente à proposição original.", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+    {q:"A negação de \"todo A é B\" é \"nenhum A é B\".", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+    {q:"Uma tautologia é uma proposição composta que é sempre falsa.", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+    {q:"Na tabela-verdade do \"ou\" inclusivo, quando P e Q são ambas falsas, o resultado é verdadeiro.", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+    {q:"Toda proposição condicional é logicamente equivalente à sua inversa (~P→~Q).", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+    {q:"Um argumento logicamente válido exige que suas premissas sejam necessariamente verdadeiras.", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+    {q:"A conjunção \"P e Q\" é verdadeira quando pelo menos uma das duas proposições é verdadeira.", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+    {q:"O conectivo \"ou exclusivo\" (XOR) é verdadeiro quando as duas proposições envolvidas são verdadeiras.", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+    {q:"A negação de uma proposição simples P é representada por P².", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+    {q:"A implicação \"se P então Q\" é verdadeira apenas quando P e Q são ambas falsas.", o:["Certo","Errado"], c:1, m:"Lógica Proposicional"},
+
+    // Diagramas Lógicos
+    {q:"Em um diagrama de Venn, a interseção de dois conjuntos representa os elementos comuns a ambos.", o:["Certo","Errado"], c:0, m:"Diagramas Lógicos"},
+    {q:"\"Todo A é B\" é representado por um círculo A totalmente contido no círculo B.", o:["Certo","Errado"], c:0, m:"Diagramas Lógicos"},
+    {q:"\"Nenhum A é B\" é representado por dois círculos sem qualquer interseção entre si.", o:["Certo","Errado"], c:0, m:"Diagramas Lógicos"},
+    {q:"\"Algum A é B\" é representado por uma interseção parcial entre os círculos A e B.", o:["Certo","Errado"], c:0, m:"Diagramas Lógicos"},
+    {q:"Se todo A é B e todo B é C, então todo A é C.", o:["Certo","Errado"], c:0, m:"Diagramas Lógicos"},
+    {q:"Se algum A é B e todo B é C, então necessariamente todo A é C.", o:["Certo","Errado"], c:1, m:"Diagramas Lógicos"},
+    {q:"A negação lógica de \"Todo A é B\" é \"Algum A não é B\".", o:["Certo","Errado"], c:0, m:"Diagramas Lógicos"},
+    {q:"Se nenhum A é B, então nenhum B é A.", o:["Certo","Errado"], c:0, m:"Diagramas Lógicos"},
+    {q:"Se todo A é B, então necessariamente todo B é A.", o:["Certo","Errado"], c:1, m:"Diagramas Lógicos"},
+    {q:"Se algum A não é B, isso implica que nenhum A é B.", o:["Certo","Errado"], c:1, m:"Diagramas Lógicos"},
+    {q:"Silogismos válidos dependem apenas da forma lógica das premissas, não do seu conteúdo.", o:["Certo","Errado"], c:0, m:"Diagramas Lógicos"},
+    {q:"Se algum A é B e algum B é C, então necessariamente algum A é C.", o:["Certo","Errado"], c:1, m:"Diagramas Lógicos"},
+    {q:"A união de dois conjuntos representa todos os elementos de A ou de B, ou de ambos.", o:["Certo","Errado"], c:0, m:"Diagramas Lógicos"},
+    {q:"Se algum A é B, então necessariamente todo A é B.", o:["Certo","Errado"], c:1, m:"Diagramas Lógicos"},
+    {q:"Um diagrama de Venn com dois círculos totalmente disjuntos representa conjuntos com elementos em comum.", o:["Certo","Errado"], c:1, m:"Diagramas Lógicos"},
+
+    // Sequências Lógicas
+    {q:"Uma sequência é chamada aritmética quando a diferença entre termos consecutivos é constante.", o:["Certo","Errado"], c:0, m:"Sequências Lógicas"},
+    {q:"Uma sequência é chamada geométrica quando a razão entre termos consecutivos é constante.", o:["Certo","Errado"], c:0, m:"Sequências Lógicas"},
+    {q:"Na sequência de Fibonacci, cada termo é a soma dos dois termos anteriores.", o:["Certo","Errado"], c:0, m:"Sequências Lógicas"},
+    {q:"Em uma progressão aritmética, a razão entre termos consecutivos é sempre constante.", o:["Certo","Errado"], c:1, m:"Sequências Lógicas"},
+    {q:"Em uma progressão geométrica de razão negativa, os termos alternam de sinal.", o:["Certo","Errado"], c:0, m:"Sequências Lógicas"},
+    {q:"Toda sequência numérica crescente é necessariamente uma progressão aritmética.", o:["Certo","Errado"], c:1, m:"Sequências Lógicas"},
+    {q:"Uma sequência constante pode ser considerada uma progressão aritmética de razão zero.", o:["Certo","Errado"], c:0, m:"Sequências Lógicas"},
+    {q:"Uma progressão geométrica de razão igual a 1 é sempre uma sequência decrescente.", o:["Certo","Errado"], c:1, m:"Sequências Lógicas"},
+    {q:"Em uma progressão aritmética, o termo geral é obtido somando a razão sucessivamente ao primeiro termo.", o:["Certo","Errado"], c:0, m:"Sequências Lógicas"},
+    {q:"Sequências alternadas, como 1, -1, 1, -1, não podem ser descritas por nenhuma regra matemática.", o:["Certo","Errado"], c:1, m:"Sequências Lógicas"},
+    {q:"Uma sequência de números pares consecutivos é um exemplo de progressão aritmética de razão 2.", o:["Certo","Errado"], c:0, m:"Sequências Lógicas"},
+    {q:"Em uma progressão geométrica de razão maior que 1 e primeiro termo positivo, os termos decrescem indefinidamente.", o:["Certo","Errado"], c:1, m:"Sequências Lógicas"},
+    {q:"Padrões visuais repetitivos, como cores ou formas, seguem a mesma lógica das sequências numéricas.", o:["Certo","Errado"], c:0, m:"Sequências Lógicas"},
+    {q:"A sequência de Fibonacci começa necessariamente pelos números 1 e 3.", o:["Certo","Errado"], c:1, m:"Sequências Lógicas"},
+    {q:"Identificar o padrão de uma sequência é essencial para prever corretamente seu próximo termo.", o:["Certo","Errado"], c:0, m:"Sequências Lógicas"},
+
+    // Análise Combinatória
+    {q:"Em uma combinação, a ordem dos elementos escolhidos não importa.", o:["Certo","Errado"], c:0, m:"Análise Combinatória"},
+    {q:"Em um arranjo, a ordem dos elementos escolhidos não importa.", o:["Certo","Errado"], c:1, m:"Análise Combinatória"},
+    {q:"Em um arranjo, a ordem dos elementos escolhidos importa.", o:["Certo","Errado"], c:0, m:"Análise Combinatória"},
+    {q:"Em uma combinação, a ordem dos elementos escolhidos importa.", o:["Certo","Errado"], c:1, m:"Análise Combinatória"},
+    {q:"Uma permutação é um caso particular de arranjo em que todos os elementos do conjunto são utilizados.", o:["Certo","Errado"], c:0, m:"Análise Combinatória"},
+    {q:"O fatorial de um número n (n!) representa o produto de todos os inteiros positivos até n.", o:["Certo","Errado"], c:0, m:"Análise Combinatória"},
+    {q:"O fatorial de zero (0!) é igual a zero.", o:["Certo","Errado"], c:1, m:"Análise Combinatória"},
+    {q:"Por definição, 0! (fatorial de zero) é igual a 1.", o:["Certo","Errado"], c:0, m:"Análise Combinatória"},
+    {q:"O princípio fundamental da contagem afirma que, se uma etapa ocorre de m formas e outra de n formas, o total de possibilidades é m x n.", o:["Certo","Errado"], c:0, m:"Análise Combinatória"},
+    {q:"Combinação e arranjo são sempre conceitos idênticos em análise combinatória.", o:["Certo","Errado"], c:1, m:"Análise Combinatória"},
+    {q:"Para escolher os integrantes de uma comissão sem cargos definidos entre eles, utiliza-se combinação.", o:["Certo","Errado"], c:0, m:"Análise Combinatória"},
+    {q:"Para formar uma senha numérica, utiliza-se combinação, pois a ordem dos dígitos não importa.", o:["Certo","Errado"], c:1, m:"Análise Combinatória"},
+    {q:"Para formar uma senha numérica, utiliza-se arranjo, pois a ordem dos dígitos importa.", o:["Certo","Errado"], c:0, m:"Análise Combinatória"},
+    {q:"A permutação de um conjunto de elementos distintos não leva em conta a ordem entre eles.", o:["Certo","Errado"], c:1, m:"Análise Combinatória"},
+    {q:"Em problemas de contagem, a palavra \"e\" geralmente indica multiplicação de possibilidades, e \"ou\" indica soma.", o:["Certo","Errado"], c:0, m:"Análise Combinatória"},
+
+    // Porcentagem
+    {q:"100% de um valor corresponde ao valor total, ou seja, multiplicá-lo por 1.", o:["Certo","Errado"], c:0, m:"Porcentagem"},
+    {q:"Aumentar um valor em 100% equivale a dobrá-lo.", o:["Certo","Errado"], c:0, m:"Porcentagem"},
+    {q:"Aumentar um valor em 10% e depois diminuí-lo em 10% sempre retorna ao valor original.", o:["Certo","Errado"], c:1, m:"Porcentagem"},
+    {q:"Uma redução de 50% em um valor equivale a dividi-lo por 2.", o:["Certo","Errado"], c:0, m:"Porcentagem"},
+    {q:"Uma porcentagem sempre representa uma fração maior que 1.", o:["Certo","Errado"], c:1, m:"Porcentagem"},
+    {q:"A expressão \"por cento\" significa \"por cada cem\".", o:["Certo","Errado"], c:0, m:"Porcentagem"},
+    {q:"50% equivale à fração 1/2.", o:["Certo","Errado"], c:0, m:"Porcentagem"},
+    {q:"25% equivale à fração 1/3.", o:["Certo","Errado"], c:1, m:"Porcentagem"},
+    {q:"10% de um valor equivale a dividir esse valor por 10.", o:["Certo","Errado"], c:0, m:"Porcentagem"},
+    {q:"Um desconto de 100% sobre um valor significa que o valor final é reduzido pela metade.", o:["Certo","Errado"], c:1, m:"Porcentagem"},
+    {q:"Se um valor aumenta 20% e depois mais 20%, o aumento total não é simplesmente 40%, pois a segunda variação incide sobre o novo valor.", o:["Certo","Errado"], c:0, m:"Porcentagem"},
+    {q:"Percentuais aplicados sucessivamente sempre podem ser somados diretamente para obter o efeito total.", o:["Certo","Errado"], c:1, m:"Porcentagem"},
+    {q:"1% equivale à fração 1/100.", o:["Certo","Errado"], c:0, m:"Porcentagem"},
+    {q:"Uma porcentagem negativa não pode representar uma redução de valor.", o:["Certo","Errado"], c:1, m:"Porcentagem"},
+    {q:"Para transformar uma fração em porcentagem, multiplica-se essa fração por 100.", o:["Certo","Errado"], c:0, m:"Porcentagem"},
+
+    // Equações de 1º e 2º Graus
+    {q:"Uma equação do 1º grau possui a incógnita elevada apenas ao expoente 1.", o:["Certo","Errado"], c:0, m:"Equações de 1º e 2º Graus"},
+    {q:"Uma equação do 2º grau apresenta a incógnita elevada ao expoente 2 como maior grau.", o:["Certo","Errado"], c:0, m:"Equações de 1º e 2º Graus"},
+    {q:"A forma geral de uma equação do 2º grau é ax² + bx + c = 0, com a diferente de zero.", o:["Certo","Errado"], c:0, m:"Equações de 1º e 2º Graus"},
+    {q:"Em uma equação do 2º grau, o coeficiente \"a\" pode ser igual a zero.", o:["Certo","Errado"], c:1, m:"Equações de 1º e 2º Graus"},
+    {q:"O discriminante (delta) de uma equação do 2º grau é dado por b² menos 4ac.", o:["Certo","Errado"], c:0, m:"Equações de 1º e 2º Graus"},
+    {q:"Quando o discriminante é negativo, a equação do 2º grau não possui raízes reais.", o:["Certo","Errado"], c:0, m:"Equações de 1º e 2º Graus"},
+    {q:"Quando o discriminante é negativo, a equação do 2º grau possui duas raízes reais distintas.", o:["Certo","Errado"], c:1, m:"Equações de 1º e 2º Graus"},
+    {q:"Quando o discriminante é igual a zero, a equação do 2º grau possui uma única raiz real (raiz dupla).", o:["Certo","Errado"], c:0, m:"Equações de 1º e 2º Graus"},
+    {q:"Toda equação do 1º grau pode ser resolvida isolando a incógnita em um dos lados da igualdade.", o:["Certo","Errado"], c:0, m:"Equações de 1º e 2º Graus"},
+    {q:"Uma equação do 1º grau sempre possui duas soluções distintas.", o:["Certo","Errado"], c:1, m:"Equações de 1º e 2º Graus"},
+    {q:"A fórmula de Bhaskara é utilizada para encontrar as raízes de uma equação do 2º grau.", o:["Certo","Errado"], c:0, m:"Equações de 1º e 2º Graus"},
+    {q:"A fórmula de Bhaskara é aplicada exclusivamente a equações do 1º grau.", o:["Certo","Errado"], c:1, m:"Equações de 1º e 2º Graus"},
+    {q:"O produto das raízes de uma equação do 2º grau ax²+bx+c=0 é dado por c/a.", o:["Certo","Errado"], c:0, m:"Equações de 1º e 2º Graus"},
+    {q:"A soma das raízes de uma equação do 2º grau é sempre igual a c/a.", o:["Certo","Errado"], c:1, m:"Equações de 1º e 2º Graus"},
+    {q:"Em uma equação do 1º grau da forma ax + b = 0, com a diferente de zero, a solução é x = b/a.", o:["Certo","Errado"], c:1, m:"Equações de 1º e 2º Graus"},
+
+    // Geometria Básica
+    {q:"A soma dos ângulos internos de um triângulo é sempre igual a 180°.", o:["Certo","Errado"], c:0, m:"Geometria Básica"},
+    {q:"A soma dos ângulos internos de um quadrilátero convexo é igual a 360°.", o:["Certo","Errado"], c:0, m:"Geometria Básica"},
+    {q:"A soma dos ângulos internos de um triângulo pode variar conforme o tipo de triângulo.", o:["Certo","Errado"], c:1, m:"Geometria Básica"},
+    {q:"Um triângulo equilátero possui os três lados e os três ângulos iguais.", o:["Certo","Errado"], c:0, m:"Geometria Básica"},
+    {q:"Um triângulo isósceles possui pelo menos dois lados iguais.", o:["Certo","Errado"], c:0, m:"Geometria Básica"},
+    {q:"Um triângulo escaleno possui todos os lados e todos os ângulos iguais.", o:["Certo","Errado"], c:1, m:"Geometria Básica"},
+    {q:"Um ângulo reto mede exatamente 90°.", o:["Certo","Errado"], c:0, m:"Geometria Básica"},
+    {q:"Um ângulo obtuso mede menos de 90°.", o:["Certo","Errado"], c:1, m:"Geometria Básica"},
+    {q:"Um ângulo agudo mede mais de 90°.", o:["Certo","Errado"], c:1, m:"Geometria Básica"},
+    {q:"O perímetro de uma figura plana é a soma das medidas de todos os seus lados.", o:["Certo","Errado"], c:0, m:"Geometria Básica"},
+    {q:"A área de um quadrado é calculada multiplicando-se a medida de um lado por 4.", o:["Certo","Errado"], c:1, m:"Geometria Básica"},
+    {q:"A área de um retângulo é o produto entre sua base e sua altura.", o:["Certo","Errado"], c:0, m:"Geometria Básica"},
+    {q:"Todo losango é necessariamente um quadrado.", o:["Certo","Errado"], c:1, m:"Geometria Básica"},
+    {q:"Todo quadrado é um tipo particular de retângulo.", o:["Certo","Errado"], c:0, m:"Geometria Básica"},
+    {q:"Um círculo possui infinitos eixos de simetria.", o:["Certo","Errado"], c:0, m:"Geometria Básica"},
+
+    // Português: Interpretação de Texto
+    {q:"A interpretação de um texto exige compreender tanto o que está explícito quanto o que está implícito.", o:["Certo","Errado"], c:0, m:"Português: Interpretação de Texto"},
+    {q:"A ideia central de um texto costuma estar relacionada ao seu tema principal.", o:["Certo","Errado"], c:0, m:"Português: Interpretação de Texto"},
+    {q:"Interpretar um texto significa apenas reproduzir literalmente as palavras do autor.", o:["Certo","Errado"], c:1, m:"Português: Interpretação de Texto"},
+    {q:"Um texto dissertativo-argumentativo tem como objetivo defender um ponto de vista.", o:["Certo","Errado"], c:0, m:"Português: Interpretação de Texto"},
+    {q:"Um texto narrativo tem como finalidade principal defender uma tese por meio de argumentos.", o:["Certo","Errado"], c:1, m:"Português: Interpretação de Texto"},
+    {q:"A coerência textual está relacionada à lógica e ao sentido das ideias apresentadas no texto.", o:["Certo","Errado"], c:0, m:"Português: Interpretação de Texto"},
+    {q:"A coesão textual refere-se à ligação gramatical entre as partes do texto, como o uso de conectivos.", o:["Certo","Errado"], c:0, m:"Português: Interpretação de Texto"},
+    {q:"Inferir uma informação em um texto significa apenas repetir o que está escrito literalmente.", o:["Certo","Errado"], c:1, m:"Português: Interpretação de Texto"},
+    {q:"O gênero textual \"notícia\" tem caráter informativo e relata fatos.", o:["Certo","Errado"], c:0, m:"Português: Interpretação de Texto"},
+    {q:"Toda interpretação de texto admite qualquer resposta, pois depende exclusivamente da opinião do leitor.", o:["Certo","Errado"], c:1, m:"Português: Interpretação de Texto"},
+
+    // Português: Gramática
+    {q:"Substantivos são palavras que nomeiam seres, objetos, lugares ou sentimentos.", o:["Certo","Errado"], c:0, m:"Português: Gramática"},
+    {q:"Verbos indicam ação, estado ou fenômeno da natureza.", o:["Certo","Errado"], c:0, m:"Português: Gramática"},
+    {q:"Adjetivos são palavras que substituem o substantivo na frase.", o:["Certo","Errado"], c:1, m:"Português: Gramática"},
+    {q:"Adjetivos qualificam ou caracterizam o substantivo.", o:["Certo","Errado"], c:0, m:"Português: Gramática"},
+    {q:"Pronomes são palavras que substituem ou acompanham o substantivo.", o:["Certo","Errado"], c:0, m:"Português: Gramática"},
+    {q:"Advérbios sempre concordam em gênero e número com o substantivo a que se referem.", o:["Certo","Errado"], c:1, m:"Português: Gramática"},
+    {q:"Advérbios modificam verbos, adjetivos ou outros advérbios.", o:["Certo","Errado"], c:0, m:"Português: Gramática"},
+    {q:"A concordância verbal exige que o verbo concorde em número e pessoa com o sujeito.", o:["Certo","Errado"], c:0, m:"Português: Gramática"},
+    {q:"A concordância nominal não tem relação com gênero e número entre substantivo e adjetivo.", o:["Certo","Errado"], c:1, m:"Português: Gramática"},
+    {q:"Sujeito e predicado são os termos essenciais da oração.", o:["Certo","Errado"], c:0, m:"Português: Gramática"},
+    {q:"Toda oração deve obrigatoriamente conter um objeto direto.", o:["Certo","Errado"], c:1, m:"Português: Gramática"},
+    {q:"A crase indica a fusão da preposição \"a\" com o artigo feminino \"a\".", o:["Certo","Errado"], c:0, m:"Português: Gramática"},
+    {q:"A crase é utilizada antes de palavras masculinas.", o:["Certo","Errado"], c:1, m:"Português: Gramática"},
+    {q:"Conjunções são palavras que ligam orações ou termos de uma mesma oração.", o:["Certo","Errado"], c:0, m:"Português: Gramática"},
+    {q:"Preposições e conjunções exercem exatamente a mesma função gramatical.", o:["Certo","Errado"], c:1, m:"Português: Gramática"},
+
+    // Português: Reescrita
+    {q:"Duas frases são consideradas equivalentes quando mantêm o mesmo sentido, mesmo com palavras diferentes.", o:["Certo","Errado"], c:0, m:"Português: Reescrita"},
+    {q:"A voz passiva pode reescrever uma frase da voz ativa sem alterar seu sentido básico.", o:["Certo","Errado"], c:0, m:"Português: Reescrita"},
+    {q:"Trocar a ordem das palavras em uma frase nunca altera o sentido dela.", o:["Certo","Errado"], c:1, m:"Português: Reescrita"},
+    {q:"Substituir uma palavra por um sinônimo pode manter a equivalência de sentido da frase.", o:["Certo","Errado"], c:0, m:"Português: Reescrita"},
+    {q:"Toda reescrita de uma frase deve necessariamente aumentar o número de palavras do texto original.", o:["Certo","Errado"], c:1, m:"Português: Reescrita"},
+    {q:"A conjunção \"porém\" pode ser substituída por \"entretanto\", mantendo sentido semelhante de oposição.", o:["Certo","Errado"], c:0, m:"Português: Reescrita"},
+    {q:"As conjunções \"porque\" e \"portanto\" têm o mesmo valor semântico e podem ser usadas como sinônimas.", o:["Certo","Errado"], c:1, m:"Português: Reescrita"},
+    {q:"Reescrever \"Ele não foi à festa porque estava doente\" como \"Como estava doente, ele não foi à festa\" mantém o mesmo sentido.", o:["Certo","Errado"], c:0, m:"Português: Reescrita"},
+    {q:"Uma frase na voz ativa, ao ser reescrita na voz passiva, sempre muda o sentido original da ação.", o:["Certo","Errado"], c:1, m:"Português: Reescrita"},
+    {q:"É possível reescrever uma frase substituindo uma oração subordinada por uma expressão equivalente, sem alterar o sentido.", o:["Certo","Errado"], c:0, m:"Português: Reescrita"}
   ];
 
   var st = {
@@ -1187,20 +1420,92 @@
     } catch(e) {}
   }
 
+  function escXml(s){
+    return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  // Paleta oficial da tela do Game Boy (4 tons de verde) - usada em TODO o pódio
+  var GB_LIGHT = "#9bbc0f"; // tela / tom mais claro
+  var GB_MID   = "#8bac0f"; // tom médio
+  var GB_DARK  = "#306230"; // tom escuro
+  var GB_INK   = "#0f380f"; // tom mais escuro (contorno / texto)
+
+  // desenha um bloco "pixelado" (retângulo sem arredondamento, contorno grosso)
+  function pxRect(x,y,w,h,fill,stroke){
+    stroke = stroke || GB_INK;
+    return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3" shape-rendering="crispEdges"/>';
+  }
+
+  // faixa quadriculada (estilo pixel-art) na base de cada pedestal
+  function checkerBand(x,y,w,h,cols){
+    var cw = w / cols;
+    var s = '';
+    for (var i=0; i<cols; i++){
+      var c = (i % 2 === 0) ? GB_INK : GB_MID;
+      s += '<rect x="'+(x+i*cw)+'" y="'+y+'" width="'+cw+'" height="'+h+'" fill="'+c+'" shape-rendering="crispEdges"/>';
+    }
+    return s;
+  }
+
+  function buildPodiumSVG(list){
+    var p1 = list[0], p2 = list[1], p3 = list[2];
+    var i1 = escXml(p1 && p1.initials ? p1.initials : "---");
+    var i2 = escXml(p2 && p2.initials ? p2.initials : "---");
+    var i3 = escXml(p3 && p3.initials ? p3.initials : "---");
+
+    var svg = '<svg class="podium-svg" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">';
+
+    // ---- pedestal 2 (esquerda) ----
+    svg += pxRect(15, 100, 80, 60, GB_DARK);
+    svg += checkerBand(15, 140, 80, 20, 8);
+    svg += '<text x="55" y="128" text-anchor="middle" font-family="ui-monospace,monospace" font-size="13" font-weight="800" fill="'+GB_LIGHT+'">2</text>';
+
+    // ---- pedestal 1 (centro, mais alto) ----
+    svg += pxRect(105, 65, 90, 95, GB_DARK);
+    svg += checkerBand(105, 140, 90, 20, 9);
+    svg += '<text x="150" y="100" text-anchor="middle" font-family="ui-monospace,monospace" font-size="16" font-weight="800" fill="'+GB_LIGHT+'">1</text>';
+
+    // ---- pedestal 3 (direita) ----
+    svg += pxRect(205, 120, 80, 40, GB_DARK);
+    svg += checkerBand(205, 140, 80, 20, 8);
+    svg += '<text x="245" y="135" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="800" fill="'+GB_LIGHT+'">3</text>';
+
+    // ---- placa da base ----
+    svg += pxRect(5, 160, 290, 26, GB_MID);
+    svg += '<text x="150" y="178" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="800" letter-spacing="1" fill="'+GB_INK+'">CRT CHAMPIONSHIP</text>';
+
+    // ---- troféu pixelado do 1º lugar, com as iniciais gravadas na taça ----
+    svg += ''+
+      pxRect(140, 8, 20, 8, GB_MID)  +   // alça/rebordo superior
+      pxRect(128, 16, 44, 10, GB_MID) +  // aro da taça
+      pxRect(114, 16, 14, 16, GB_DARK) + // alça esquerda
+      pxRect(172, 16, 14, 16, GB_DARK) + // alça direita
+      pxRect(126, 26, 48, 16, GB_MID) +  // corpo da taça (mais largo)
+      pxRect(134, 42, 32, 10, GB_MID) +  // corpo estreitando
+      pxRect(142, 52, 16, 10, GB_DARK) + // haste
+      pxRect(132, 62, 36, 8, GB_DARK) +  // base do troféu
+      '<text x="150" y="38" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11" font-weight="800" letter-spacing="0.5" fill="'+GB_INK+'">' + i1 + '</text>';
+
+    // ---- 2º e 3º lugar: apenas as iniciais em placas pixeladas, sem medalha ----
+    svg += pxRect(30, 78, 50, 18, GB_MID) +
+      '<text x="55" y="91" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="800" fill="'+GB_INK+'">' + i2 + '</text>';
+
+    svg += pxRect(220, 98, 50, 18, GB_MID) +
+      '<text x="245" y="111" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="800" fill="'+GB_INK+'">' + i3 + '</text>';
+
+    svg += '</svg>';
+    return svg;
+  }
+
   function renderRankingBox(){
     var box = $("rankingList");
     if (!box) return;
     var list = st.rankingTop3 || [];
     if (list.length === 0) {
-      box.textContent = "Seja o 1º a pontuar!";
+      box.innerHTML = "<div class='ranking-empty'>Seja o 1º a pontuar!</div>";
       return;
     }
-    var medals = ["1º","2º","3º"];
-    var html = "";
-    list.forEach(function(e, i){
-      html += "<div class='ranking-row'><span>" + medals[i] + " " + (e.initials || "???") + "</span><span>" + (e.score || 0) + " pts</span></div>";
-    });
-    box.innerHTML = html;
+    box.innerHTML = buildPodiumSVG(list);
   }
 
   function submitScoreToRanking(initials, score){
@@ -1306,14 +1611,12 @@
     if (modeKey() === "quiz") {
       $("rangeContainer").style.display = "none";
       var totalQ = st.quizQuestions.length;
-      $("menuRecord").innerHTML = "Melhor sequência Quiz: <span>" + st.bestQuizStreak + "</span> (total: " + totalQ + " perguntas)";
-      $("rankingBox").style.display = "block";
-      renderRankingBox();
+      $("menuRecord").innerHTML = "Melhor sequência Quiz: <span>" + st.bestQuizStreak + "</span> (" + totalQ + " perguntas)";
     } else {
       $("rangeContainer").style.display = "block";
       $("menuRecord").innerHTML = "Melhor sequência: <span>" + st.bestStreak + "</span>";
-      $("rankingBox").style.display = "none";
     }
+    renderRankingBox();
 
     $("statModeName").textContent = "MENU";
     $("statRight").textContent = "";
@@ -1378,6 +1681,7 @@
       right = st.timeLeft + "s · NÍVEL " + st.currentLevel;
     }
     $("statRight").textContent = right;
+    $("statHearts").textContent = (st.scene === "play" && modeKey() === "quiz") ? heartsString(st.lives) : "";
   }
 
   function getHappyFace() {
@@ -1514,8 +1818,9 @@
       st.locked = false;
 
       $("questionText").textContent = q.q;
-      $("playFooter").innerHTML = "<span class='footer-hearts'>" + heartsString(st.lives) + "</span> &middot; Matéria: <span>" + q.m + "</span>";
+      $("playFooter").innerHTML = "Matéria: <span>" + q.m + "</span>";
       $("optionsGrid").className = "options-grid quiz-mode";
+      updateStatusBar();
       renderOptions();
       return;
     }
@@ -1637,7 +1942,7 @@
     updateStatusBar();
 
     if (isQuiz) {
-      $("playFooter").innerHTML = "<span class='footer-hearts'>" + heartsString(st.lives) + "</span> &middot; Matéria: <span>" + (st.currentQuizQuestion ? st.currentQuizQuestion.m : "") + "</span>";
+      $("playFooter").innerHTML = "Matéria: <span>" + (st.currentQuizQuestion ? st.currentQuizQuestion.m : "") + "</span>";
     } else {
       $("streakDisplay").textContent = st.streak;
       $("levelDisplay").textContent = st.currentLevel;
